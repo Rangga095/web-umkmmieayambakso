@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mie Ayam Pak Sabar Menanti</title>
+    <title>Mie Ayam Pak Sabar Menanti - Cita Rasa Autentik</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -51,16 +51,26 @@
 
     <nav class="bg-orange-600 text-white p-4 shadow-2xl sticky top-0 z-50 border-b border-orange-500">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="#beranda" class="flex items-center gap-3 group">
-                <img src="{{ asset('images/logo_mie.jpg') }}" alt="Logo Pak Sabar" class="h-10 w-auto object-contain transition-all duration-300 group-hover:scale-110 group-hover:rotate-2">
+           <a href="#beranda" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md text-xl transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
+                    🍜
+                </div>
+                <div class="flex flex-col text-white">
+                    <span class="text-xl font-extrabold leading-none tracking-tight group-hover:text-orange-200 transition-colors duration-300 drop-shadow-md">
+                        MIE AYAM
+                    </span>
+                    <span class="text-[10px] font-bold text-orange-200 tracking-[0.2em] uppercase">
+                        Pak Sabar Menanti
+                    </span>
+                </div>
             </a>
             <div class="flex items-center gap-10">
                 <ul class="hidden lg:flex space-x-8 font-semibold text-sm">
-                    <li><a href="#beranda" class="hover:text-orange-200 transition-colors">Beranda</a></li>
-                    <li><a href="#cerita" class="hover:text-orange-200 transition-colors">Kisah Kami</a></li>
-                    <li><a href="#menu" class="hover:text-orange-200 transition-colors">Menu Andalan</a></li>
-                    <li><a href="#testimoni" class="hover:text-orange-200 transition-colors">Testimoni</a></li>
-                    <li><a href="#lokasi" class="hover:text-orange-200 transition-colors">Lokasi Kami</a></li>
+                    <li><a href="#beranda" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(253,186,116,0.8)]">Beranda</a></li>
+                    <li><a href="#cerita" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(253,186,116,0.8)]">Kisah Kami</a></li>
+                    <li><a href="#menu" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(253,186,116,0.8)]">Menu Andalan</a></li>
+                    <li><a href="#testimoni" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(253,186,116,0.8)]">Testimoni</a></li>
+                    <li><a href="#lokasi" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(253,186,116,0.8)]">Lokasi Kami</a></li>
                 </ul>
                 <a href="https://wa.me/6281234567890" target="_blank" class="bg-white text-orange-600 px-6 py-2.5 rounded-full font-bold hover:bg-orange-100 hover:scale-105 transition-all shadow-lg text-sm">
                     Pesan Sekarang
@@ -85,11 +95,12 @@
             <p class="text-lg md:text-2xl text-gray-200 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
                 Sajian Spesial Mie Ayam & Bakso Urat terbaik di Tembalang. Cita rasa otentik yang bikin ketagihan dari suapan pertama.
             </p>
-            <div class="flex flex-col md:flex-row gap-4 justify-center">
-                <a href="#menu" class="bg-orange-500 text-white px-10 py-4 rounded-full text-lg font-extrabold shadow-2xl hover:bg-orange-600 hover:-translate-y-1 transition-all">
+
+            <div class="flex flex-col md:flex-row gap-5 justify-center mt-6">
+                <a href="#menu" class="bg-orange-500 text-white px-10 py-4 rounded-full text-lg font-extrabold shadow-lg transition-all duration-300 hover:bg-orange-600 hover:-translate-y-2 hover:scale-105 hover:shadow-[0_10px_25px_rgba(249,115,22,0.6)]">
                     Lihat Menu Kami
                 </a>
-                <a href="#cerita" class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-4 rounded-full text-lg font-bold hover:bg-white/20 transition-all">
+                <a href="#cerita" class="bg-white/10 backdrop-blur-md text-white border border-white/30 px-10 py-4 rounded-full text-lg font-bold transition-all duration-300 hover:bg-white/20 hover:-translate-y-2 hover:scale-105 hover:shadow-[0_0_25px_rgba(255,255,255,0.4)] hover:border-white/60">
                     Mengenal Kami
                 </a>
             </div>
