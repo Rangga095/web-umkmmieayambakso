@@ -369,14 +369,14 @@
 
                 <div class="bg-white p-8 rounded-3xl shadow-md border-2 border-orange-200 inline-block mb-6 relative">
                     <img src="{{ asset('images/qris.jpg') }}" alt="QRIS Warung Pak Sabar" class="w-48 h-48 object-cover rounded-xl mx-auto mb-4 border-4 border-orange-100 shadow-sm">
-                    <p class="font-bold text-lg text-gray-800">a.n. Warung Pak Sabar</p>
+                    <p class="font-bold text-lg text-gray-800">bayarnya disini ya kak 🥰</p>
                     <p class="text-orange-600 font-black text-2xl mt-2" id="qrisTotalAmmount">Rp 0</p>
                 </div>
 
                 <div class="bg-orange-100 border border-orange-200 p-4 rounded-xl max-w-md mx-auto mb-8">
                     <p class="text-sm text-orange-800 mb-1">Kode Pesanan Unik Anda:</p>
                     <p class="text-3xl font-black text-orange-600 tracking-widest" id="displayOrderCode">PS-0000</p>
-                    <p class="text-xs text-orange-600 mt-2">*Tunjukkan kode ini kepada kasir/Pak Sabar jika pesanan dibungkus.</p>
+                    <p class="text-xs text-orange-600 mt-2 font-medium" id="qrisInstructionText">*Instruksi akan muncul di sini</p>
                 </div>
 
                 <div class="max-w-md mx-auto flex gap-4">
@@ -395,9 +395,24 @@
     <div id="modalPeringatan" class="fixed inset-0 z-[110] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white w-full max-w-3xl rounded-[2rem] shadow-2xl relative transform scale-95 transition-transform duration-300" id="modalPeringatanContent">
 
-            <button onclick="tutupModalPeringatan()" class="absolute top-4 right-4 bg-orange-100 text-orange-600 hover:text-red-500 hover:bg-red-50 rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl shadow-sm transition-all z-10">
-                ×
-            </button>
+            <button onclick="tutupModalPeringatan()" class="absolute top-4 right-4 bg-orange-100 text-orange-600 hover:text-red-500 rounded-full w-10 h-10 font-bold text-xl z-10">×</button>
+
+            <div class="grid grid-cols-1 md:grid-cols-5 overflow-hidden rounded-[2rem]">
+                <div class="relative h-56 md:h-auto md:col-span-2 bg-orange-50 p-6 flex items-center justify-center">
+                    <img src="{{ asset('images/peringatan.jpg') }}" alt="Peringatan" class="max-w-full max-h-full object-contain drop-shadow-md">
+                </div>
+
+                <div class="p-8 md:p-10 md:col-span-3 flex flex-col justify-center text-left bg-white">
+                    <h3 id="judulPeringatan" class="text-2xl font-extrabold text-gray-800 mb-4">Duh, Maaf Banget Kak! 🙏</h3>
+                    <div id="isiPeringatan" class="text-gray-600 text-sm mb-8 leading-relaxed">
+                        </div>
+                    <button onclick="tutupModalPeringatan()" class="w-full bg-orange-600 text-white py-3.5 rounded-xl font-bold hover:bg-orange-700 shadow-md">
+                        Siap, Lengkapi Sekarang!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
             <div class="grid grid-cols-1 md:grid-cols-5 overflow-hidden rounded-[2rem]">
 
@@ -509,11 +524,28 @@
         }
 
         // FUNGSI BARU: Membuka Modal Peringatan
-        function bukaModalPeringatan() {
-            modalPeringatan.classList.remove('hidden');
-            // Pastikan modal peringatan di atas modal pemesanan
-            modalPeringatan.style.zIndex = "110";
+       function bukaModalPeringatan(tipeError) {
+            const judul = document.getElementById('judulPeringatan');
+            const isi = document.getElementById('isiPeringatan');
 
+            if (tipeError === 'identitas') {
+                judul.innerText = "Duh, Maaf Banget Kak! 🙏";
+                isi.innerHTML = `
+                    <p>Pak Sabar butuh sedikit bantuan nih. Biar pesanannya nggak ketuker, tolong lengkapi data berikut ya:</p>
+                    <ul class="list-disc list-inside font-semibold text-orange-600 mt-2">
+                        <li>Nama Pemesan</li>
+                        <li>Nomor WhatsApp</li>
+                    </ul>
+                `;
+            } else if (tipeError === 'meja') {
+                judul.innerText = "Satu Lagi Ketinggalan! 🪑";
+                isi.innerHTML = `
+                    <p>Karena Kakak pilih <b>Makan di Tempat</b>, Pak Sabar perlu tahu Kakak duduk di mana.</p>
+                    <p class="mt-2 text-orange-600 font-semibold">Tolong isi Nomor Meja Kakak di formulir ya! 🍜</p>
+                `;
+            }
+
+            modalPeringatan.classList.remove('hidden');
             setTimeout(() => {
                 modalPeringatan.classList.remove('opacity-0');
                 modalPeringatanContent.classList.remove('scale-95');
@@ -563,20 +595,33 @@
             let meja = document.getElementById('modalCustomerTable').value;
             let paymentMethod = document.getElementById('modalPaymentMethod').value;
 
-            // LOGIKA BARU: Validasi memicu MODAL PERINGATAN, bukan alert()
+            // Validasi Data
+          // Validasi Nama dan WA
             if (nama.trim() === "" || noWA.trim() === "") {
-                bukaModalPeringatan(); // Panggil fungsi buka modal peringatan
-                return; // Stop eksekusi fungsi
+                bukaModalPeringatan('identitas');
+                return;
             }
+
+            // Validasi Nomor Meja
             if (orderType === 'Makan di Tempat' && meja.trim() === "") {
-                alert("Mohon isi Nomor Meja untuk pesanan Makan di Tempat."); // Ini alert sederhana, bisa diganti modal juga nanti
+                bukaModalPeringatan('meja');
+                return;
+            }
+
+            if (orderType === 'Makan di Tempat' && meja.trim() === "") {
+                alert("Mohon isi Nomor Meja untuk pesanan Makan di Tempat.");
                 return;
             }
 
             let totalFormatted = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(harga * qty);
 
-            let orderCode = "PS-" + Math.floor(1000 + Math.random() * 9000);
+            // LOGIKA BARU: KODE PESANAN BERDASARKAN NAMA + 2 ANGKA ACAK
+            // Mengambil kata pertama dari nama pelanggan dan mengubahnya jadi huruf kapital
+            let namaPanggilan = nama.trim().split(' ')[0].toUpperCase();
+            let angkaAcak = Math.floor(10 + Math.random() * 90); // Menghasilkan 2 angka acak (10-99)
+            let orderCode = namaPanggilan + "-" + angkaAcak;
 
+            // Susun Teks WhatsApp
             let text = `*PESANAN BARU - ${orderType.toUpperCase()}*%0A`;
             text += `🔖 *Kode Pesanan:* ${orderCode}%0A%0A`;
             text += `👤 *Nama:* ${nama}%0A`;
@@ -603,7 +648,17 @@
             if (paymentMethod === 'Tunai') {
                 kirimWAFinal();
             } else {
+                // Tampilkan Kode Pesanan di layar QRIS
                 document.getElementById('displayOrderCode').innerText = orderCode;
+
+                // LOGIKA BARU: TEKS INSTRUKSI DINAMIS
+                let infoText = document.getElementById('qrisInstructionText');
+                if (orderType === 'Makan di Tempat') {
+                    infoText.innerText = `*Sebutkan kode ini kepada kasir/Pak Sabar untuk verifikasi pembayaran ${meja}.`;
+                } else {
+                    infoText.innerText = "*Tunjukkan kode ini kepada kasir/Pak Sabar saat mengambil pesanan bungkus Anda.";
+                }
+
                 viewForm.classList.remove('block');
                 viewForm.classList.add('hidden');
                 viewQRIS.classList.remove('hidden');
