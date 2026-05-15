@@ -393,28 +393,33 @@
     </div>
 
     <div id="modalPeringatan" class="fixed inset-0 z-[110] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-
-        <div class="bg-white w-full max-w-2xl rounded-[2rem] shadow-2xl relative transform scale-95 transition-transform duration-300" id="modalPeringatanContent">
+        <div class="bg-white w-full max-w-3xl rounded-[2rem] shadow-2xl relative transform scale-95 transition-transform duration-300" id="modalPeringatanContent">
 
             <button onclick="tutupModalPeringatan()" class="absolute top-4 right-4 bg-orange-100 text-orange-600 hover:text-red-500 hover:bg-red-50 rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl shadow-sm transition-all z-10">
                 ×
             </button>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-[2rem]">
-                <div class="relative h-64 md:h-full bg-orange-50">
-                    <img src="{{ asset('images/peringatan.jpg') }}" alt="Peringatan Pak Sabar" class="w-full h-full object-cover">
+            <div class="grid grid-cols-1 md:grid-cols-5 overflow-hidden rounded-[2rem]">
+
+                <div class="relative h-64 md:h-auto md:col-span-2 bg-orange-50 p-6 flex items-center justify-center">
+                    <img src="{{ asset('images/peringatan.jpg') }}" alt="Peringatan Pak Sabar" class="max-w-full max-h-full object-contain drop-shadow-md">
                 </div>
 
-                <div class="p-10 flex flex-col justify-center items-center text-center">
-                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center text-4xl mb-6 shadow-inner">⚠️</div>
-                    <h3 class="text-3xl font-extrabold text-gray-800 mb-4 leading-tight">Stop Dulu, Kak!</h3>
-                    <p class="text-gray-600 text-base mb-8 leading-relaxed">
-                        Pak Sabar mau kasih tahu sesuatu... Biar mie ayamnya nggak ketuker dan cepat sampai ke meja, tolong lengkapi data <strong class="text-orange-600">Nama</strong> dan <strong class="text-orange-600">Nomor WhatsApp</strong> Kakak dulu ya di form! Pak Sabar sabar menanti pesanan Kakak yang lengkap!
-                    </p>
-                    <button onclick="tutupModalPeringatan()" class="w-full bg-orange-600 text-white py-3.5 rounded-xl text-lg font-bold hover:bg-orange-700 transition-colors shadow-md transform active:scale-95">
-                        Siap, Pak Sabar!
+                <div class="p-8 md:p-10 md:col-span-3 flex flex-col justify-center text-left bg-white">
+                    <h3 class="text-2xl font-extrabold text-gray-800 mb-4">Duh, Maaf Banget Kak! 🙏</h3>
+                    <div class="text-gray-600 text-sm mb-8 space-y-3 leading-relaxed">
+                        <p>Pak Sabar butuh sedikit bantuan nih. Biar pesanannya nggak ketuker dan cepat disiapkan, tolong lengkapi data berikut di formulir ya:</p>
+                        <ul class="list-disc list-inside font-semibold text-orange-600 ml-2">
+                            <li>Nama Pemesan</li>
+                            <li>Nomor WhatsApp</li>
+                        </ul>
+                        <p>Pak Sabar tunggu pesanan lengkapnya! 👨‍🍳</p>
+                    </div>
+                    <button onclick="tutupModalPeringatan()" class="w-full bg-orange-600 text-white py-3.5 rounded-xl font-bold hover:bg-orange-700 shadow-md transition-all">
+                        Siap, Lengkapi Sekarang!
                     </button>
                 </div>
+
             </div>
         </div>
     </div>
