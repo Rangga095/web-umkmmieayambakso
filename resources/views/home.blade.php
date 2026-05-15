@@ -9,93 +9,63 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; }
-        .hero-gradient {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.8) 100%);
-        }
-
-        /* Animasi mengambang (terus-menerus) */
-        .logo-float {
-            animation: floating 3s ease-in-out infinite;
-        }
+        .hero-gradient { background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.8) 100%); }
+        .logo-float { animation: floating 3s ease-in-out infinite; }
         @keyframes floating {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
-
-        /* Animasi Entry (Glitch Pop seperti referensi video) */
-        .logo-pop-glitch {
-            animation: popGlitch 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
+        .logo-pop-glitch { animation: popGlitch 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
         @keyframes popGlitch {
-            0% {
-                transform: scale(0) skewX(20deg);
-                opacity: 0;
-                filter: drop-shadow(-10px 0 0 #0ff) drop-shadow(10px 0 0 #f0f);
-            }
-            40% {
-                transform: scale(1.2) skewX(-10deg);
-                opacity: 1;
-                filter: drop-shadow(10px 0 0 #0ff) drop-shadow(-10px 0 0 #f0f);
-            }
-            60% {
-                transform: scale(0.9) skewX(5deg);
-                filter: none;
-            }
+            0% { transform: scale(0) skewX(20deg); opacity: 0; filter: drop-shadow(-10px 0 0 #0ff) drop-shadow(10px 0 0 #f0f); }
+            40% { transform: scale(1.2) skewX(-10deg); opacity: 1; filter: drop-shadow(10px 0 0 #0ff) drop-shadow(-10px 0 0 #f0f); }
+            60% { transform: scale(0.9) skewX(5deg); filter: none; }
             80% { transform: scale(1.05) skewX(0deg); }
             100% { transform: scale(1); opacity: 1; }
         }
+        .modal-open { overflow: hidden; }
+
+        .modal-scroll::-webkit-scrollbar { width: 8px; }
+        .modal-scroll::-webkit-scrollbar-track { background: #fff7ed; border-radius: 10px; }
+        .modal-scroll::-webkit-scrollbar-thumb { background: #fdba74; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-orange-50 text-gray-800 overflow-x-hidden">
 
     <nav class="bg-orange-600 text-white p-4 shadow-2xl sticky top-0 z-50 border-b border-orange-500">
         <div class="container mx-auto flex justify-between items-center">
-           <a href="#beranda" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md text-xl transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
-                    🍜
-                </div>
+            <a href="#beranda" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md text-xl transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">🍜</div>
                 <div class="flex flex-col text-white">
-                    <span class="text-xl font-extrabold leading-none tracking-tight group-hover:text-orange-200 transition-colors duration-300 drop-shadow-md">
-                        MIE AYAM
-                    </span>
-                    <span class="text-[10px] font-bold text-orange-200 tracking-[0.2em] uppercase">
-                        Pak Sabar Menanti
-                    </span>
+                    <span class="text-xl font-extrabold leading-none tracking-tight group-hover:text-orange-200 transition-colors duration-300 drop-shadow-md">MIE AYAM</span>
+                    <span class="text-[10px] font-bold text-orange-200 tracking-[0.2em] uppercase">Pak Sabar Menanti</span>
                 </div>
             </a>
             <div class="flex items-center gap-10">
                 <ul class="hidden lg:flex space-x-8 font-semibold text-sm">
-                    <li><a href="#beranda" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(253,186,116,0.8)]">Beranda</a></li>
-                    <li><a href="#cerita" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(253,186,116,0.8)]">Kisah Kami</a></li>
-                    <li><a href="#menu" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(253,186,116,0.8)]">Menu Andalan</a></li>
-                    <li><a href="#testimoni" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(253,186,116,0.8)]">Testimoni</a></li>
-                    <li><a href="#lokasi" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(253,186,116,0.8)]">Lokasi Kami</a></li>
+                    <li><a href="#beranda" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110">Beranda</a></li>
+                    <li><a href="#cerita" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110">Kisah Kami</a></li>
+                    <li><a href="#menu" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110">Menu Andalan</a></li>
+                    <li><a href="#testimoni" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110">Testimoni</a></li>
+                    <li><a href="#lokasi" class="inline-block hover:text-orange-200 transition-all duration-300 hover:-translate-y-1 hover:scale-110">Lokasi Kami</a></li>
                 </ul>
-                <a href="https://wa.me/6281234567890" target="_blank" class="bg-white text-orange-600 px-6 py-2.5 rounded-full font-bold hover:bg-orange-100 hover:scale-105 transition-all shadow-lg text-sm">
-                    Pesan Sekarang
-                </a>
             </div>
         </div>
     </nav>
 
     <header id="beranda" class="relative min-h-[90vh] flex items-center justify-center bg-cover bg-center bg-no-repeat px-4" style="background-image: url('{{ asset('images/mie_ayam.jpg') }}');">
         <div class="absolute inset-0 hero-gradient"></div>
-
         <div class="relative z-10 text-center max-w-4xl" data-aos="fade-up">
-
             <div class="logo-float mx-auto w-max mb-8">
-                <img src="{{ asset('images/logo_mie.jpg') }}" alt="Logo Besar"
-                     class="h-32 md:h-48 w-auto object-contain cursor-pointer logo-pop-glitch transition-all duration-500 hover:scale-110 hover:drop-shadow-[0_0_25px_#f97316]">
+                <img src="{{ asset('images/logo_mie.jpg') }}" alt="Logo Besar" class="h-32 md:h-48 w-auto object-contain cursor-pointer logo-pop-glitch transition-all duration-500 hover:scale-110 hover:drop-shadow-[0_0_25px_#f97316]">
             </div>
-
             <h2 class="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight">
                 Sabar Menantinya,<br><span class="text-orange-500 italic">Nikmat Rasanya!</span>
             </h2>
             <p class="text-lg md:text-2xl text-gray-200 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
                 Sajian Spesial Mie Ayam & Bakso Urat terbaik di Tembalang. Cita rasa otentik yang bikin ketagihan dari suapan pertama.
             </p>
-
             <div class="flex flex-col md:flex-row gap-5 justify-center mt-6">
                 <a href="#menu" class="bg-orange-500 text-white px-10 py-4 rounded-full text-lg font-extrabold shadow-lg transition-all duration-300 hover:bg-orange-600 hover:-translate-y-2 hover:scale-105 hover:shadow-[0_10px_25px_rgba(249,115,22,0.6)]">
                     Lihat Menu Kami
@@ -118,16 +88,6 @@
                 <h4 class="text-4xl font-extrabold text-gray-800 mb-6 leading-tight">Lebih Dari Sekadar<br>Semangkuk Mie</h4>
                 <p class="text-gray-600 mb-4 leading-relaxed text-lg italic border-l-4 border-orange-500 pl-4">"Rasa jujur, harga sedulur." — Pak Sabar</p>
                 <p class="text-gray-600 leading-relaxed text-base mb-6">Kuah kaldu yang dimasak perlahan dengan rempah pilihan, mie kenyal buatan tangan, dan bakso urat sapi asli adalah alasan mengapa pelanggan setia kami selalu rela "bersabar menanti" untuk hidangan istimewa ini.</p>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-orange-100">
-                        <span class="block text-2xl font-bold text-orange-600">Legend</span>
-                        <span class="text-xs text-gray-500 uppercase font-bold">di Tembalang</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-orange-100">
-                        <span class="block text-2xl font-bold text-orange-600">100%</span>
-                        <span class="text-xs text-gray-500 uppercase font-bold">Bahan Segar</span>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -148,16 +108,15 @@
                             <span class="flex items-center gap-1">🍜 <i>Foto Menyusul</i></span>
                         </div>
                     @endif
-                    <div class="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-full text-[10px] font-bold text-orange-600 shadow-sm uppercase">Terlaris</div>
                 </div>
                 <div class="p-4 flex flex-col flex-grow">
                     <h4 class="font-bold text-base md:text-xl mb-1 text-gray-800 line-clamp-1" title="{{ $menu->nama_menu }}">{{ $menu->nama_menu }}</h4>
                     <p class="text-gray-500 mb-4 text-xs md:text-sm line-clamp-2 flex-grow">{{ $menu->deskripsi }}</p>
                     <div class="flex flex-col mt-auto gap-3">
                         <span class="font-extrabold text-orange-600 text-lg md:text-xl italic">Rp {{ number_format($menu->harga, 0, ',', '.') }}</span>
-                        <a href="https://wa.me/6281234567890?text=Halo%20Pak%20Sabar,%20saya%20mau%20pesan%20{{ $menu->nama_menu }}" target="_blank" class="bg-orange-50 border border-orange-200 text-orange-600 px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all text-center w-full shadow-sm">
+                        <button onclick="bukaModalPesan('{{ $menu->nama_menu }}', {{ $menu->harga }})" class="bg-orange-50 border border-orange-200 text-orange-600 px-3 py-2.5 rounded-xl font-bold text-xs md:text-sm hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all text-center w-full shadow-sm">
                             Pesan
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -184,7 +143,6 @@
                         <div><h5 class="font-bold text-gray-800 text-sm">Ibu Sumarsih</h5><p class="text-xs text-gray-500">1 ulasan</p></div>
                     </div>
                 </div>
-
                 <div data-aos="zoom-in" data-aos-delay="200" class="bg-white p-6 rounded-3xl shadow-sm border border-orange-100 flex flex-col justify-between hover:-translate-y-2 transition-transform">
                     <div>
                         <div class="flex text-yellow-400 mb-4 text-sm">★★★★★</div>
@@ -192,10 +150,9 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center font-bold text-green-700">N</div>
-                        <div><h5 class="font-bold text-gray-800 text-sm">Nanda Adi</h5><p class="text-xs text-gray-500">Local Guide · 9 ulasan</p></div>
+                        <div><h5 class="font-bold text-gray-800 text-sm">Nanda Adi</h5><p class="text-xs text-gray-500">Local Guide</p></div>
                     </div>
                 </div>
-
                 <div data-aos="zoom-in" data-aos-delay="300" class="bg-white p-6 rounded-3xl shadow-sm border border-orange-100 flex flex-col justify-between hover:-translate-y-2 transition-transform">
                     <div>
                         <div class="flex text-yellow-400 mb-4 text-sm">★★★★★</div>
@@ -203,10 +160,9 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-pink-200 rounded-full flex items-center justify-center font-bold text-pink-700">K</div>
-                        <div><h5 class="font-bold text-gray-800 text-sm">Kim Rherhe</h5><p class="text-xs text-gray-500">1 ulasan · 14 foto</p></div>
+                        <div><h5 class="font-bold text-gray-800 text-sm">Kim Rherhe</h5><p class="text-xs text-gray-500">14 foto</p></div>
                     </div>
                 </div>
-
                 <div data-aos="zoom-in" data-aos-delay="400" class="bg-white p-6 rounded-3xl shadow-sm border border-orange-100 flex flex-col justify-between hover:-translate-y-2 transition-transform">
                     <div>
                         <div class="flex text-yellow-400 mb-4 text-sm">★★★★★</div>
@@ -214,10 +170,9 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-blue-200 rounded-full flex items-center justify-center font-bold text-blue-700">A</div>
-                        <div><h5 class="font-bold text-gray-800 text-sm">Adi Rubiyanto</h5><p class="text-xs text-gray-500">Local Guide · 519 ulasan</p></div>
+                        <div><h5 class="font-bold text-gray-800 text-sm">Adi Rubiyanto</h5><p class="text-xs text-gray-500">Local Guide</p></div>
                     </div>
                 </div>
-
                 <div data-aos="zoom-in" data-aos-delay="100" class="bg-white p-6 rounded-3xl shadow-sm border border-orange-100 flex flex-col justify-between hover:-translate-y-2 transition-transform mt-2">
                     <div>
                         <div class="flex text-yellow-400 mb-4 text-sm">★★★★★</div>
@@ -228,7 +183,6 @@
                         <div><h5 class="font-bold text-gray-800 text-sm">Bimo Anggara</h5><p class="text-xs text-gray-500">Mahasiswa Undip</p></div>
                     </div>
                 </div>
-
                 <div data-aos="zoom-in" data-aos-delay="200" class="bg-white p-6 rounded-3xl shadow-sm border border-orange-100 flex flex-col justify-between hover:-translate-y-2 transition-transform mt-2">
                     <div>
                         <div class="flex text-yellow-400 mb-4 text-sm">★★★★★</div>
@@ -239,7 +193,6 @@
                         <div><h5 class="font-bold text-gray-800 text-sm">Rian Hidayat</h5><p class="text-xs text-gray-500">Warga Sekitar</p></div>
                     </div>
                 </div>
-
                 <div data-aos="zoom-in" data-aos-delay="300" class="bg-white p-6 rounded-3xl shadow-sm border border-orange-100 flex flex-col justify-between hover:-translate-y-2 transition-transform mt-2">
                     <div>
                         <div class="flex text-yellow-400 mb-4 text-sm">★★★★★</div>
@@ -250,7 +203,6 @@
                         <div><h5 class="font-bold text-gray-800 text-sm">Sari Wulandari</h5><p class="text-xs text-gray-500">Pelanggan Setia</p></div>
                     </div>
                 </div>
-
                 <div data-aos="zoom-in" data-aos-delay="400" class="bg-white p-6 rounded-3xl shadow-sm border border-orange-100 flex flex-col justify-between hover:-translate-y-2 transition-transform mt-2">
                     <div>
                         <div class="flex text-yellow-400 mb-4 text-sm">★★★★★</div>
@@ -261,7 +213,6 @@
                         <div><h5 class="font-bold text-gray-800 text-sm">Maya Indah</h5><p class="text-xs text-gray-500">Foodies Semarang</p></div>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
@@ -272,7 +223,6 @@
                 <h3 class="text-4xl font-extrabold text-gray-800 mb-4">Kunjungi Warung Kami</h3>
                 <div class="w-24 h-1.5 bg-orange-500 mx-auto rounded-full"></div>
             </div>
-
             <div class="flex flex-col md:flex-row gap-12 items-center bg-orange-50 p-10 rounded-3xl shadow-inner border border-orange-100">
                 <div class="w-full md:w-1/3 text-center md:text-left">
                     <h4 class="text-3xl font-bold text-gray-800 mb-6 flex items-center justify-center md:justify-start gap-3">
@@ -291,7 +241,6 @@
                         <span>💬</span> Chat via WhatsApp
                     </a>
                 </div>
-
                 <div class="w-full md:w-2/3 h-80 rounded-3xl overflow-hidden shadow-lg border-8 border-white bg-gray-200 relative">
                     <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d10229.91470539719!2d110.435507!3d-7.013166!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e708d0033fcc559%3A0xf7d71e26ad43d286!2sMie%20ayam%20pak%20sabar%20menan!5e0!3m2!1sid!2sid" class="absolute top-0 left-0 w-full h-full" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
@@ -300,26 +249,376 @@
     </section>
 
     <footer class="bg-gray-900 text-gray-400 text-center py-8">
-        <img src="{{ asset('images/logo_mie.jpg') }}" alt="Logo Footer" class="h-12 w-auto mx-auto mb-6 object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 hover:scale-110 hover:drop-shadow-[0_0_15px_#f97316] transition-all duration-500 cursor-pointer">
         <p>© 2026 Mie Ayam Pak Sabar Menanti. Dikembangkan dengan ❤️ oleh Sir Rangga.</p>
     </footer>
 
-    <a href="https://wa.me/6281234567890" target="_blank" class="fixed bottom-8 right-8 z-[99] bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 hover:-translate-y-2 hover:scale-110 transition-all duration-300 group flex items-center justify-center animate-bounce hover:animate-none">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.12.551 4.168 1.594 5.986L.03 24l6.155-1.614A11.96 11.96 0 0012.031 24c6.646 0 12.031-5.385 12.031-12.031S18.677 0 12.031 0zm4.07 17.262c-.628 1.77-3.151 2.133-4.322 2.133-1.42 0-3.32-.57-5.59-2.84-2.27-2.27-2.84-4.17-2.84-5.59 0-1.171.363-3.694 2.133-4.322.569-.201 1.09-.071 1.433.824.31.81.93 2.37.989 2.49.06.12.119.3.03.48-.09.18-.18.27-.36.45-.18.18-.39.42-.54.57-.18.18-.39.39-.21.72.18.33.81 1.35 1.74 2.16 1.2 1.05 2.19 1.38 2.52 1.53.33.15.54.12.72-.09.18-.21.81-.93 1.02-1.26.21-.33.42-.27.72-.15.3.12 1.89.9 2.22 1.05.33.15.54.27.63.42.09.15.09.66-.21 1.35z"/>
-        </svg>
 
-        <span class="absolute right-16 bg-white text-green-600 font-bold px-4 py-2 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none hidden md:block border border-green-100">
-            Pesan Sekarang!
-        </span>
-    </a>
+    <div id="modalPesan" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <div class="bg-orange-50/95 w-full max-w-4xl rounded-[2rem] shadow-2xl relative transform scale-95 transition-transform duration-300 max-h-[95vh] overflow-y-auto modal-scroll" id="modalContent">
+
+            <button onclick="tutupModal()" class="absolute top-4 right-4 bg-white text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl shadow-sm transition-all z-10">
+                ×
+            </button>
+
+            <div id="viewFormPemesanan" class="p-6 md:p-10 block">
+                <div class="text-center mb-8">
+                    <h3 class="text-3xl font-extrabold text-gray-800 mb-2">Formulir Pemesanan</h3>
+                    <p class="text-gray-500 text-sm">Pilih menu, tentukan jumlah, dan kirim pesanan Anda langsung ke Pak Sabar!</p>
+                    <div class="w-16 h-1 bg-orange-500 mx-auto rounded-full mt-4"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-orange-100 flex flex-col h-full">
+                        <h4 class="text-lg font-bold text-gray-800 mb-5 flex items-center gap-2">
+                            <span class="text-xl">🍜</span> Detail Pesanan
+                        </h4>
+
+                        <input type="hidden" id="modalMenuPrice" value="0">
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2 text-sm">Menu Terpilih</label>
+                            <input type="text" id="modalMenuName" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-100 text-gray-700 font-semibold focus:outline-none" readonly>
+                        </div>
+
+                        <div id="noodleTypeWrapper" class="mb-4 hidden transition-all duration-300">
+                            <label class="block text-gray-700 font-bold mb-2 text-sm">Pilihan Mie</label>
+                            <select id="modalNoodleType" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none bg-white cursor-pointer">
+                                <option value="Sesuai Standar Menu">Sesuai Standar Menu</option>
+                                <option value="Mie Kuning & Bihun (Campur)">Mie Kuning & Bihun (Campur)</option>
+                                <option value="Mie Kuning Saja">Mie Kuning Saja</option>
+                                <option value="Bihun Saja">Bihun Saja</option>
+                                <option value="Tanpa Mie (Kosongan)">Tanpa Mie (Kosongan)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2 text-sm">Jumlah Mangkok / Porsi</label>
+                            <div class="flex items-center">
+                                <button type="button" onclick="ubahQtyModal(-1)" class="bg-orange-100 text-orange-700 px-5 py-3 rounded-l-xl font-bold hover:bg-orange-200 transition-colors text-lg">-</button>
+                                <input type="number" id="modalQty" value="1" min="1" class="w-16 text-center px-2 py-3 border-y border-gray-200 focus:outline-none bg-white font-bold text-lg" readonly>
+                                <button type="button" onclick="ubahQtyModal(1)" class="bg-orange-100 text-orange-700 px-5 py-3 rounded-r-xl font-bold hover:bg-orange-200 transition-colors text-lg">+</button>
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="block text-gray-700 font-bold mb-2 text-sm">Catatan Khusus (Opsional)</label>
+                            <input type="text" id="modalNote" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none">
+                        </div>
+
+                        <div class="mb-4 pt-4 border-t border-gray-100">
+                            <label class="block text-gray-700 font-bold mb-2 text-sm">Metode Penyajian</label>
+                            <select id="modalOrderType" onchange="toggleMejaInput()" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none bg-white cursor-pointer">
+                                <option value="Makan di Tempat">Makan di Tempat</option>
+                                <option value="Bungkus">Bungkus / Bawa Pulang</option>
+                            </select>
+                        </div>
+
+                        <div id="tableNumberWrapper" class="transition-all duration-300">
+                            <label class="block text-gray-700 font-bold mb-2 text-sm">Nomor Meja</label>
+                            <input type="text" id="modalCustomerTable" placeholder="Misal: Meja 5" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col h-full justify-between gap-6">
+
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-orange-100">
+                            <h4 class="text-lg font-bold text-gray-800 mb-5 flex items-center gap-2">
+                                <span class="text-xl">👤</span> Identitas & Pembayaran
+                            </h4>
+
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-bold mb-2 text-sm">Nama Anda</label>
+                                <input type="text" id="modalCustomerName" placeholder="Nama pemesan" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-bold mb-2 text-sm">Nomor WhatsApp</label>
+                                <input type="tel" id="modalCustomerWA" placeholder="Misal: 08123456789" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-700 font-bold mb-2 text-sm">Metode Pembayaran</label>
+                                <select id="modalPaymentMethod" class="w-full px-4 py-3 rounded-xl border border-orange-300 focus:ring-2 focus:ring-orange-500 outline-none bg-orange-50 font-bold text-orange-700 cursor-pointer">
+                                    <option value="Tunai">Tunai / Bayar di Kasir</option>
+                                    <option value="QRIS">QRIS / E-Wallet</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="bg-orange-600 p-6 rounded-2xl shadow-md text-white mt-auto">
+                            <div class="flex justify-between items-center mb-6">
+                                <span class="text-base font-medium opacity-90">Total Pembayaran:</span>
+                                <span id="modalTotalPrice" class="text-2xl md:text-3xl font-black tracking-tight">Rp 0</span>
+                            </div>
+                            <button type="button" onclick="prosesPesanan()" class="w-full bg-white text-orange-600 py-3.5 rounded-xl text-lg font-bold hover:bg-orange-50 hover:scale-[1.02] transition-transform shadow-sm">
+                                Lanjutkan Pesanan
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="viewQRIS" class="p-6 md:p-10 hidden text-center">
+                <div class="mb-6">
+                    <h3 class="text-3xl font-extrabold text-gray-800 mb-2">Selesaikan Pembayaran</h3>
+                    <p class="text-gray-500 text-sm">Silakan scan kode QRIS di bawah ini menggunakan M-Banking atau E-Wallet Anda.</p>
+                </div>
+
+                <div class="bg-white p-8 rounded-3xl shadow-md border-2 border-orange-200 inline-block mb-6 relative">
+                    <img src="{{ asset('images/qris.jpg') }}" alt="QRIS Warung Pak Sabar" class="w-48 h-48 object-cover rounded-xl mx-auto mb-4 border-4 border-orange-100 shadow-sm">
+                    <p class="font-bold text-lg text-gray-800">a.n. Warung Pak Sabar</p>
+                    <p class="text-orange-600 font-black text-2xl mt-2" id="qrisTotalAmmount">Rp 0</p>
+                </div>
+
+                <div class="bg-orange-100 border border-orange-200 p-4 rounded-xl max-w-md mx-auto mb-8">
+                    <p class="text-sm text-orange-800 mb-1">Kode Pesanan Unik Anda:</p>
+                    <p class="text-3xl font-black text-orange-600 tracking-widest" id="displayOrderCode">PS-0000</p>
+                    <p class="text-xs text-orange-600 mt-2">*Tunjukkan kode ini kepada kasir/Pak Sabar jika pesanan dibungkus.</p>
+                </div>
+
+                <div class="max-w-md mx-auto flex gap-4">
+                    <button type="button" onclick="kembaliKeForm()" class="w-1/3 bg-gray-200 text-gray-700 py-3.5 rounded-xl font-bold hover:bg-gray-300 transition-colors">
+                        Kembali
+                    </button>
+                    <button type="button" onclick="kirimWAFinal()" class="w-2/3 bg-green-500 text-white py-3.5 rounded-xl text-lg font-bold hover:bg-green-600 hover:scale-[1.02] transition-transform shadow-md flex justify-center items-center gap-2">
+                        <span>💬</span> Konfirmasi via WA
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modalPeringatan" class="fixed inset-0 z-[110] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+
+        <div class="bg-white w-full max-w-2xl rounded-[2rem] shadow-2xl relative transform scale-95 transition-transform duration-300" id="modalPeringatanContent">
+
+            <button onclick="tutupModalPeringatan()" class="absolute top-4 right-4 bg-orange-100 text-orange-600 hover:text-red-500 hover:bg-red-50 rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl shadow-sm transition-all z-10">
+                ×
+            </button>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-[2rem]">
+                <div class="relative h-64 md:h-full bg-orange-50">
+                    <img src="{{ asset('images/peringatan.jpg') }}" alt="Peringatan Pak Sabar" class="w-full h-full object-cover">
+                </div>
+
+                <div class="p-10 flex flex-col justify-center items-center text-center">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center text-4xl mb-6 shadow-inner">⚠️</div>
+                    <h3 class="text-3xl font-extrabold text-gray-800 mb-4 leading-tight">Stop Dulu, Kak!</h3>
+                    <p class="text-gray-600 text-base mb-8 leading-relaxed">
+                        Pak Sabar mau kasih tahu sesuatu... Biar mie ayamnya nggak ketuker dan cepat sampai ke meja, tolong lengkapi data <strong class="text-orange-600">Nama</strong> dan <strong class="text-orange-600">Nomor WhatsApp</strong> Kakak dulu ya di form! Pak Sabar sabar menanti pesanan Kakak yang lengkap!
+                    </p>
+                    <button onclick="tutupModalPeringatan()" class="w-full bg-orange-600 text-white py-3.5 rounded-xl text-lg font-bold hover:bg-orange-700 transition-colors shadow-md transform active:scale-95">
+                        Siap, Pak Sabar!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        AOS.init({
-            duration: 1000,
-            once: true
-        });
+        const modal = document.getElementById('modalPesan');
+        const modalContent = document.getElementById('modalContent');
+        const modalPeringatan = document.getElementById('modalPeringatan');
+        const modalPeringatanContent = document.getElementById('modalPeringatanContent');
+        const body = document.body;
+
+        const viewForm = document.getElementById('viewFormPemesanan');
+        const viewQRIS = document.getElementById('viewQRIS');
+
+        let globalWAMessage = "";
+
+        function toggleMejaInput() {
+            const orderType = document.getElementById('modalOrderType').value;
+            const tableWrapper = document.getElementById('tableNumberWrapper');
+            if (orderType === 'Makan di Tempat') {
+                tableWrapper.classList.remove('hidden');
+            } else {
+                tableWrapper.classList.add('hidden');
+                document.getElementById('modalCustomerTable').value = '';
+            }
+        }
+
+        function bukaModalPesan(namaMenu, hargaMenu) {
+            viewForm.classList.remove('hidden');
+            viewForm.classList.add('block');
+            viewQRIS.classList.remove('block');
+            viewQRIS.classList.add('hidden');
+
+            document.getElementById('modalMenuName').value = namaMenu;
+            document.getElementById('modalMenuPrice').value = hargaMenu;
+            document.getElementById('modalQty').value = 1;
+            document.getElementById('modalNoodleType').selectedIndex = 0;
+            document.getElementById('modalOrderType').selectedIndex = 0;
+            document.getElementById('modalPaymentMethod').selectedIndex = 0;
+            document.getElementById('modalNote').value = "";
+
+            toggleMejaInput();
+
+            const noodleWrapper = document.getElementById('noodleTypeWrapper');
+            if (namaMenu.toLowerCase().includes('bakso kuah')) {
+                noodleWrapper.classList.remove('hidden');
+            } else {
+                noodleWrapper.classList.add('hidden');
+            }
+
+            const noteInput = document.getElementById('modalNote');
+            let menuLower = namaMenu.toLowerCase();
+
+            if (menuLower.includes('es') || menuLower.includes('jeruk') || menuLower.includes('teh') || menuLower.includes('minuman') || menuLower.includes('kopi')) {
+                noteInput.placeholder = "Misal: Esnya sedikit, gulanya dipisah...";
+            } else if (menuLower.includes('bakso')) {
+                noteInput.placeholder = "Misal: Tanpa seledri, kuah diperbanyak...";
+            } else if (menuLower.includes('mie')) {
+                noteInput.placeholder = "Misal: Ayamnya dipisah, jangan pakai daun bawang...";
+            } else if (menuLower.includes('kerupuk') || menuLower.includes('pangsit')) {
+                noteInput.placeholder = "Misal: Tolong dibungkus plastik terpisah...";
+            } else {
+                noteInput.placeholder = "Misal: Pedas sedang, tanpa kecap...";
+            }
+
+            hitungTotalModal();
+
+            modal.classList.remove('hidden');
+            body.classList.add('modal-open');
+
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function tutupModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                body.classList.remove('modal-open');
+            }, 300);
+        }
+
+        // FUNGSI BARU: Membuka Modal Peringatan
+        function bukaModalPeringatan() {
+            modalPeringatan.classList.remove('hidden');
+            // Pastikan modal peringatan di atas modal pemesanan
+            modalPeringatan.style.zIndex = "110";
+
+            setTimeout(() => {
+                modalPeringatan.classList.remove('opacity-0');
+                modalPeringatanContent.classList.remove('scale-95');
+                modalPeringatanContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        // FUNGSI BARU: Menutup Modal Peringatan
+        function tutupModalPeringatan() {
+            modalPeringatan.classList.add('opacity-0');
+            modalPeringatanContent.classList.remove('scale-100');
+            modalPeringatanContent.classList.add('scale-95');
+
+            setTimeout(() => {
+                modalPeringatan.classList.add('hidden');
+            }, 300);
+        }
+
+        function ubahQtyModal(delta) {
+            let input = document.getElementById('modalQty');
+            let newVal = parseInt(input.value) + delta;
+            if (newVal >= 1) {
+                input.value = newVal;
+                hitungTotalModal();
+            }
+        }
+
+        function hitungTotalModal() {
+            let harga = parseInt(document.getElementById('modalMenuPrice').value);
+            let qty = parseInt(document.getElementById('modalQty').value);
+            let total = harga * qty;
+
+            let formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
+            document.getElementById('modalTotalPrice').innerText = formatter.format(total);
+            document.getElementById('qrisTotalAmmount').innerText = formatter.format(total);
+        }
+
+        function prosesPesanan() {
+            let menuName = document.getElementById('modalMenuName').value;
+            let harga = parseInt(document.getElementById('modalMenuPrice').value);
+            let qty = document.getElementById('modalQty').value;
+            let pilihanMie = document.getElementById('modalNoodleType').value;
+            let catatan = document.getElementById('modalNote').value;
+            let nama = document.getElementById('modalCustomerName').value;
+            let noWA = document.getElementById('modalCustomerWA').value;
+            let orderType = document.getElementById('modalOrderType').value;
+            let meja = document.getElementById('modalCustomerTable').value;
+            let paymentMethod = document.getElementById('modalPaymentMethod').value;
+
+            // LOGIKA BARU: Validasi memicu MODAL PERINGATAN, bukan alert()
+            if (nama.trim() === "" || noWA.trim() === "") {
+                bukaModalPeringatan(); // Panggil fungsi buka modal peringatan
+                return; // Stop eksekusi fungsi
+            }
+            if (orderType === 'Makan di Tempat' && meja.trim() === "") {
+                alert("Mohon isi Nomor Meja untuk pesanan Makan di Tempat."); // Ini alert sederhana, bisa diganti modal juga nanti
+                return;
+            }
+
+            let totalFormatted = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(harga * qty);
+
+            let orderCode = "PS-" + Math.floor(1000 + Math.random() * 9000);
+
+            let text = `*PESANAN BARU - ${orderType.toUpperCase()}*%0A`;
+            text += `🔖 *Kode Pesanan:* ${orderCode}%0A%0A`;
+            text += `👤 *Nama:* ${nama}%0A`;
+            text += `📱 *No. WA:* ${noWA}%0A`;
+
+            if (orderType === 'Makan di Tempat') {
+                text += `📍 *Nomor Meja:* ${meja}%0A`;
+            }
+            text += `💳 *Pembayaran:* ${paymentMethod}%0A%0A`;
+
+            text += `*Detail Pesanan:*%0A`;
+            text += `- Menu: ${menuName}%0A`;
+            text += `- Jumlah: ${qty} porsi%0A`;
+
+            const noodleWrapper = document.getElementById('noodleTypeWrapper');
+            if (!noodleWrapper.classList.contains('hidden') && pilihanMie !== "Sesuai Standar Menu") {
+                text += `- Jenis Mie: ${pilihanMie}%0A`;
+            }
+            if (catatan.trim() !== "") text += `- Catatan: ${catatan}%0A`;
+            text += `%0A💰 *TOTAL BAYAR: ${totalFormatted}*`;
+
+            globalWAMessage = text;
+
+            if (paymentMethod === 'Tunai') {
+                kirimWAFinal();
+            } else {
+                document.getElementById('displayOrderCode').innerText = orderCode;
+                viewForm.classList.remove('block');
+                viewForm.classList.add('hidden');
+                viewQRIS.classList.remove('hidden');
+                viewQRIS.classList.add('block');
+            }
+        }
+
+        function kembaliKeForm() {
+            viewQRIS.classList.remove('block');
+            viewQRIS.classList.add('hidden');
+            viewForm.classList.remove('hidden');
+            viewForm.classList.add('block');
+        }
+
+        function kirimWAFinal() {
+            window.open(`https://wa.me/6281234567890?text=${globalWAMessage}`, '_blank');
+            tutupModal();
+        }
     </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init({ duration: 1000, once: true });</script>
 </body>
 </html>
