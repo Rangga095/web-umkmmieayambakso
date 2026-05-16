@@ -324,13 +324,18 @@
                             <input type="hidden" id="modalCustomerTable" value="">
 
                             <div class="grid grid-cols-5 gap-2 md:gap-3">
-                                @foreach($mejas as $meja)
+                               @foreach($mejas as $meja)
+                                    @php
+                                        // Membuat ID tanpa spasi, misal: btn-meja-Meja01
+                                        $idTombol = 'btn-meja-' . str_replace(' ', '', $meja->nomor_meja);
+                                    @endphp
+
                                     @if($meja->status == 'kosong')
-                                        <button type="button" onclick="pilihMeja('{{ $meja->nomor_meja }}', this)" class="meja-btn w-full py-2 rounded-xl border-2 border-green-400 bg-green-50 text-green-700 font-black text-sm md:text-base hover:bg-green-500 hover:text-white hover:shadow-md transition-all cursor-pointer">
+                                        <button type="button" id="{{ $idTombol }}" onclick="pilihMeja('{{ $meja->nomor_meja }}', this)" class="meja-btn w-full py-2 rounded-xl border-2 border-green-400 bg-green-50 text-green-700 font-black text-sm md:text-base hover:bg-green-500 hover:text-white hover:shadow-md transition-all cursor-pointer">
                                             {{ str_replace('Meja ', '', $meja->nomor_meja) }}
                                         </button>
                                     @else
-                                        <button type="button" disabled class="w-full py-2 rounded-xl border-2 border-red-200 bg-red-50 text-red-400 font-black text-sm md:text-base cursor-not-allowed opacity-70" title="Meja sudah terisi">
+                                        <button type="button" id="{{ $idTombol }}" disabled class="w-full py-2 rounded-xl border-2 border-red-200 bg-red-50 text-red-400 font-black text-sm md:text-base cursor-not-allowed opacity-70" title="Meja sudah terisi">
                                             {{ str_replace('Meja ', '', $meja->nomor_meja) }}
                                         </button>
                                     @endif
@@ -604,7 +609,7 @@
         function prosesPesanan() {
             let menuName = document.getElementById('modalMenuName').value;
             let harga = parseInt(document.getElementById('modalMenuPrice').value);
-            let qty = document.getElementById('modalQty').value;
+            let qty = parseInt(document.getElementById('modalQty').value);
             let pilihanMie = document.getElementById('modalNoodleType').value;
             let catatan = document.getElementById('modalNote').value;
             let nama = document.getElementById('modalCustomerName').value;
@@ -613,11 +618,7 @@
             let meja = document.getElementById('modalCustomerTable').value;
             let paymentMethod = document.getElementById('modalPaymentMethod').value;
 
-      // ==========================================
-            // VALIDASI DATA KETAT (ANTI ASAL-ASALAN)
-            // ==========================================
-
-            // 1. Validasi Nama: Hanya huruf dan spasi, minimal 3 karakter
+            // 1. Validasi Data
             const namaRegex = /^[a-zA-Z\s]{3,}$/;
             if (!namaRegex.test(nama.trim())) {
                 bukaModalPeringatan('identitas');
@@ -626,7 +627,6 @@
                 return;
             }
 
-            // 2. Validasi Nomor WA: Harus diawali 08 atau 628, panjang 10-13 angka
             const waRegex = /^(08|628)[0-9]{8,11}$/;
             if (!waRegex.test(noWA.trim())) {
                 bukaModalPeringatan('identitas');
@@ -635,17 +635,16 @@
                 return;
             }
 
-            // 3. Validasi Nomor Meja (Wajib pilih jika Makan di Tempat)
             if (orderType === 'Makan di Tempat' && meja.trim() === "") {
                 bukaModalPeringatan('meja');
                 return;
             }
+
             let totalFormatted = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(harga * qty);
 
-            // LOGIKA BARU: KODE PESANAN BERDASARKAN NAMA + 2 ANGKA ACAK
-            // Mengambil kata pertama dari nama pelanggan dan mengubahnya jadi huruf kapital
+            // Pembuatan Kode Pesanan Unik
             let namaPanggilan = nama.trim().split(' ')[0].toUpperCase();
-            let angkaAcak = Math.floor(10 + Math.random() * 90); // Menghasilkan 2 angka acak (10-99)
+            let angkaAcak = Math.floor(10 + Math.random() * 90);
             let orderCode = namaPanggilan + "-" + angkaAcak;
 
             // Susun Teks WhatsApp
@@ -653,12 +652,10 @@
             text += `🔖 *Kode Pesanan:* ${orderCode}%0A%0A`;
             text += `👤 *Nama:* ${nama}%0A`;
             text += `📱 *No. WA:* ${noWA}%0A`;
-
             if (orderType === 'Makan di Tempat') {
                 text += `📍 *Nomor Meja:* ${meja}%0A`;
             }
             text += `💳 *Pembayaran:* ${paymentMethod}%0A%0A`;
-
             text += `*Detail Pesanan:*%0A`;
             text += `- Menu: ${menuName}%0A`;
             text += `- Jumlah: ${qty} porsi%0A`;
@@ -672,25 +669,74 @@
 
             globalWAMessage = text;
 
-            if (paymentMethod === 'Tunai') {
-                kirimWAFinal();
-            } else {
-                // Tampilkan Kode Pesanan di layar QRIS
-                document.getElementById('displayOrderCode').innerText = orderCode;
+            // ==========================================
+            // LOGIKA BARU: KIRIM DATA KE DATABASE LARAVEL
+            // ==========================================
 
-                // LOGIKA BARU: TEKS INSTRUKSI DINAMIS
-                let infoText = document.getElementById('qrisInstructionText');
-                if (orderType === 'Makan di Tempat') {
-                    infoText.innerText = `*Sebutkan kode ini kepada kasir/Pak Sabar untuk verifikasi pembayaran ${meja}.`;
+            // 1. Kumpulkan data untuk dikirim (Payload)
+            const payload = {
+                _token: '{{ csrf_token() }}', // Wajib di Laravel sebagai keamanaan
+                kode_pesanan: orderCode,
+                nama: nama,
+                noWA: noWA,
+                orderType: orderType,
+                nomor_meja: orderType === 'Makan di Tempat' ? meja : null,
+                menuName: menuName,
+                qty: qty,
+                pilihanMie: pilihanMie,
+                catatan: catatan,
+                paymentMethod: paymentMethod,
+                totalHarga: harga * qty
+            };
+
+            // 2. Ubah tampilan tombol jadi "Loading" agar customer tidak double-click
+            const btnSubmit = document.querySelector('button[onclick="prosesPesanan()"]');
+            const originalBtnText = btnSubmit.innerHTML;
+            btnSubmit.innerHTML = 'Memproses... ⏳';
+            btnSubmit.disabled = true;
+
+            // 3. Eksekusi pengiriman data secara background (Fetch API)
+            fetch('/simpan-pesanan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Kembalikan tombol ke bentuk semula setelah ada jawaban dari server
+                btnSubmit.innerHTML = originalBtnText;
+                btnSubmit.disabled = false;
+
+                if(data.status === 'sukses') {
+                    // JIKA DATA BERHASIL DISIMPAN KE DATABASE:
+                    if (paymentMethod === 'Tunai') {
+                        kirimWAFinal();
+                    } else {
+                        document.getElementById('displayOrderCode').innerText = orderCode;
+                        let infoText = document.getElementById('qrisInstructionText');
+                        if (orderType === 'Makan di Tempat') {
+                            infoText.innerText = "*Sebutkan kode ini kepada kasir/Pak Sabar untuk verifikasi pembayaran " + meja + ".";
+                        } else {
+                            infoText.innerText = "*Tunjukkan kode ini kepada kasir/Pak Sabar saat mengambil pesanan bungkus Anda.";
+                        }
+                        viewForm.classList.remove('block');
+                        viewForm.classList.add('hidden');
+                        viewQRIS.classList.remove('hidden');
+                        viewQRIS.classList.add('block');
+                    }
                 } else {
-                    infoText.innerText = "*Tunjukkan kode ini kepada kasir/Pak Sabar saat mengambil pesanan bungkus Anda.";
+                    alert('Gagal menyimpan pesanan. Silakan coba lagi.');
                 }
-
-                viewForm.classList.remove('block');
-                viewForm.classList.add('hidden');
-                viewQRIS.classList.remove('hidden');
-                viewQRIS.classList.add('block');
-            }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                btnSubmit.innerHTML = originalBtnText;
+                btnSubmit.disabled = false;
+                alert('Terjadi kesalahan koneksi ke server database.');
+            });
         }
 
         function kembaliKeForm() {
@@ -704,6 +750,43 @@
             window.open(`https://wa.me/6281234567890?text=${globalWAMessage}`, '_blank');
             tutupModal();
         }
+        // ==========================================
+        // RADAR MEJA REAL-TIME (AJAX POLLING)
+        // ==========================================
+        setInterval(() => {
+            // Jika modal pesanan sedang tidak dibuka, jangan jalankan radar (hemat kuota server)
+            if (document.getElementById('modalPesan').classList.contains('hidden')) return;
+
+            fetch('/cek-status-meja')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(meja => {
+                    // Cari tombol meja di layar berdasarkan ID (KTP yang kita buat di Langkah 2)
+                    let idTombol = 'btn-meja-' + meja.nomor_meja.replace(/\s/g, '');
+                    let btn = document.getElementById(idTombol);
+
+                    if(btn) {
+                        // JIKA DI DATABASE TERISI (MERAH), TAPI DI LAYAR CUSTOMER MASIH HIJAU
+                        if(meja.status === 'terisi' && !btn.disabled) {
+
+                            // 1. Ubah visual tombol jadi merah dan matikan
+                            btn.disabled = true;
+                            btn.className = "w-full py-2 rounded-xl border-2 border-red-200 bg-red-50 text-red-400 font-black text-sm md:text-base cursor-not-allowed opacity-70";
+                            btn.onclick = null; // Hapus kemampuan klik
+
+                            // 2. Cegah bentrok! Jika customer sedang memilih meja ini, batalkan pilihannya!
+                            if(document.getElementById('modalCustomerTable').value === meja.nomor_meja) {
+                                document.getElementById('modalCustomerTable').value = '';
+                                document.getElementById('teksMejaTerpilih').classList.add('hidden');
+
+                                alert('Yah! 🥲 ' + meja.nomor_meja + ' baru saja selesai dipesan oleh orang lain sedetik yang lalu. Silakan pilih meja hijau yang lain ya kak.');
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Gagal scan meja:', error));
+        }, 5000); // 5000 milidetik = Radar menyala dan mengecek setiap 5 detik
     </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>AOS.init({ duration: 1000, once: true });</script>

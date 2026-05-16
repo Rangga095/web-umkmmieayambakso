@@ -25,7 +25,7 @@ public function up()
         $table->string('metode_penyajian'); // Makan di Tempat / Bungkus
         $table->string('metode_pembayaran'); // Tunai / QRIS
         $table->integer('total_harga');
-        $table->enum('status_pesanan', ['pending', 'dimasak', 'selesai'])->default('pending');
+        $table->enum('status_pesanan', ['pending', 'dimasak', 'selesai', 'ditolak'])->default('pending');
         $table->timestamps();
     });
 }
