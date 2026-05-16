@@ -1,17 +1,12 @@
-<?php
+use App\Models\Menu;
+use App\Models\Meja; // Pastikan Model Meja di-import
 
-   namespace App\Http\Controllers;
+public function index()
+{
+    $menus = Menu::all();
+    // Ambil HANYA meja yang berstatus 'kosong'
+    $mejas = Meja::where('status', 'kosong')->get();
 
-   use App\Models\Menu; // Memanggil model Menu yang tadi kita buat
-
-   class HomeController extends Controller
-   {
-       public function index()
-       {
-           // Mengambil semua data menu dari database (nanti kita isi)
-           $menus = Menu::all();
-
-           // Mengirim data ke tampilan bernama 'home'
-           return view('home', compact('menus'));
-       }
-   }
+    // Kirim $mejas bersamaan dengan $menus ke halaman home
+    return view('home', compact('menus', 'mejas'));
+}
