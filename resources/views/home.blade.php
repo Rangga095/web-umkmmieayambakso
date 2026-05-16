@@ -54,9 +54,13 @@
         </div>
     </nav>
 
-    <header id="beranda" class="relative min-h-[90vh] flex items-center justify-center bg-cover bg-center bg-no-repeat px-4" style="background-image: url('{{ asset('images/mie_ayam.jpg') }}');">
-        <div class="absolute inset-0 hero-gradient"></div>
-        <div class="relative z-10 text-center max-w-4xl" data-aos="fade-up">
+    <header id="beranda" class="relative min-h-[90vh] flex items-center justify-center px-4 overflow-hidden">
+        <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0">
+            <source src="{{ asset('videos/hero_animasi.mp4') }}" type="video/mp4">
+            Penyembas imbas anda tidak menyokong tag video.
+        </video>
+        <div class="absolute inset-0 hero-gradient z-10"></div>
+        <div class="relative z-20 text-center max-w-4xl" data-aos="fade-up">
             <div class="logo-float mx-auto w-max mb-8">
                 <img src="{{ asset('images/logo_mie.jpg') }}" alt="Logo Besar" class="h-32 md:h-48 w-auto object-contain cursor-pointer logo-pop-glitch transition-all duration-500 hover:scale-110 hover:drop-shadow-[0_0_25px_#f97316]">
             </div>
@@ -392,44 +396,20 @@
         </div>
     </div>
 
-    <div id="modalPeringatan" class="fixed inset-0 z-[110] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+   <div id="modalPeringatan" class="fixed inset-0 z-[110] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+
         <div class="bg-white w-full max-w-3xl rounded-[2rem] shadow-2xl relative transform scale-95 transition-transform duration-300" id="modalPeringatanContent">
-
-            <button onclick="tutupModalPeringatan()" class="absolute top-4 right-4 bg-orange-100 text-orange-600 hover:text-red-500 rounded-full w-10 h-10 font-bold text-xl z-10">×</button>
-
+            <button onclick="tutupModalPeringatan()" class="absolute top-4 right-4 bg-orange-100 text-orange-600 hover:text-red-500 hover:bg-red-50 rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl shadow-sm transition-all z-10">
+            </button>
             <div class="grid grid-cols-1 md:grid-cols-5 overflow-hidden rounded-[2rem]">
-                <div class="relative h-56 md:h-auto md:col-span-2 bg-orange-50 p-6 flex items-center justify-center">
-                    <img src="{{ asset('images/peringatan.jpg') }}" alt="Peringatan" class="max-w-full max-h-full object-contain drop-shadow-md">
-                </div>
-
-                <div class="p-8 md:p-10 md:col-span-3 flex flex-col justify-center text-left bg-white">
-                    <h3 id="judulPeringatan" class="text-2xl font-extrabold text-gray-800 mb-4">Duh, Maaf Banget Kak! 🙏</h3>
-                    <div id="isiPeringatan" class="text-gray-600 text-sm mb-8 leading-relaxed">
-                        </div>
-                    <button onclick="tutupModalPeringatan()" class="w-full bg-orange-600 text-white py-3.5 rounded-xl font-bold hover:bg-orange-700 shadow-md">
-                        Siap, Lengkapi Sekarang!
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-5 overflow-hidden rounded-[2rem]">
-
                 <div class="relative h-64 md:h-auto md:col-span-2 bg-orange-50 p-6 flex items-center justify-center">
                     <img src="{{ asset('images/peringatan.jpg') }}" alt="Peringatan Pak Sabar" class="max-w-full max-h-full object-contain drop-shadow-md">
                 </div>
-
                 <div class="p-8 md:p-10 md:col-span-3 flex flex-col justify-center text-left bg-white">
-                    <h3 class="text-2xl font-extrabold text-gray-800 mb-4">Duh, Maaf Banget Kak! 🙏</h3>
-                    <div class="text-gray-600 text-sm mb-8 space-y-3 leading-relaxed">
-                        <p>Pak Sabar butuh sedikit bantuan nih. Biar pesanannya nggak ketuker dan cepat disiapkan, tolong lengkapi data berikut di formulir ya:</p>
-                        <ul class="list-disc list-inside font-semibold text-orange-600 ml-2">
-                            <li>Nama Pemesan</li>
-                            <li>Nomor WhatsApp</li>
-                        </ul>
-                        <p>Pak Sabar tunggu pesanan lengkapnya! 👨‍🍳</p>
-                    </div>
+                    <h3 id="judulPeringatan" class="text-2xl font-extrabold text-gray-800 mb-4">Duh, Maaf Banget Kak! 🙏</h3>
+
+                    <div id="isiPeringatan" class="text-gray-600 text-sm mb-8 space-y-3 leading-relaxed">
+                        </div>
                     <button onclick="tutupModalPeringatan()" class="w-full bg-orange-600 text-white py-3.5 rounded-xl font-bold hover:bg-orange-700 shadow-md transition-all">
                         Siap, Lengkapi Sekarang!
                     </button>
@@ -437,8 +417,8 @@
 
             </div>
         </div>
-    </div>
 
+    </div>
     <script>
         const modal = document.getElementById('modalPesan');
         const modalContent = document.getElementById('modalContent');
@@ -607,12 +587,6 @@
                 bukaModalPeringatan('meja');
                 return;
             }
-
-            if (orderType === 'Makan di Tempat' && meja.trim() === "") {
-                alert("Mohon isi Nomor Meja untuk pesanan Makan di Tempat.");
-                return;
-            }
-
             let totalFormatted = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(harga * qty);
 
             // LOGIKA BARU: KODE PESANAN BERDASARKAN NAMA + 2 ANGKA ACAK
