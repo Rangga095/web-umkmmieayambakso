@@ -318,17 +318,32 @@
                             </select>
                         </div>
 
-                        <div id="tableNumberWrapper" class="transition-all duration-300 hidden">
-                            <label class="block text-gray-700 font-bold mb-2 text-sm">Nomor Meja</label>
-                            <select id="modalCustomerTable" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none bg-white cursor-pointer">
-                                <option value="">-- Pilih Meja Kosong --</option>
+                        <div id="tableNumberWrapper" class="transition-all duration-300 hidden mb-4 pt-4 border-t border-gray-100">
+                            <label class="block text-gray-700 font-bold mb-3 text-sm">Pilih Nomor Meja</label>
+
+                            <input type="hidden" id="modalCustomerTable" value="">
+
+                            <div class="grid grid-cols-5 gap-2 md:gap-3">
                                 @foreach($mejas as $meja)
-                                    <option value="{{ $meja->nomor_meja }}">{{ $meja->nomor_meja }}</option>
+                                    @if($meja->status == 'kosong')
+                                        <button type="button" onclick="pilihMeja('{{ $meja->nomor_meja }}', this)" class="meja-btn w-full py-2 rounded-xl border-2 border-green-400 bg-green-50 text-green-700 font-black text-sm md:text-base hover:bg-green-500 hover:text-white hover:shadow-md transition-all cursor-pointer">
+                                            {{ str_replace('Meja ', '', $meja->nomor_meja) }}
+                                        </button>
+                                    @else
+                                        <button type="button" disabled class="w-full py-2 rounded-xl border-2 border-red-200 bg-red-50 text-red-400 font-black text-sm md:text-base cursor-not-allowed opacity-70" title="Meja sudah terisi">
+                                            {{ str_replace('Meja ', '', $meja->nomor_meja) }}
+                                        </button>
+                                    @endif
                                 @endforeach
-                            </select>
+                            </div>
+
+                            <div id="teksMejaTerpilih" class="hidden mt-4 p-3 bg-orange-50 border border-orange-200 rounded-xl text-center">
+                                <span class="text-sm text-gray-600">Meja Terpilih:</span>
+                                <span id="labelMeja" class="font-black text-orange-600 text-lg ml-2"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex flex-col h-full justify-between gap-6">
+
+                    </div> <div class="flex flex-col h-full justify-between gap-6">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-orange-100">
                             <h4 class="text-lg font-bold text-gray-800 mb-5 flex items-center gap-2">
                                 <span class="text-xl">👤</span> Identitas & Pembayaran
@@ -436,7 +451,33 @@
             } else {
                 tableWrapper.classList.add('hidden');
                 document.getElementById('modalCustomerTable').value = '';
+                document.getElementById('teksMejaTerpilih').classList.add('hidden'); // Sembunyikan label
+
+                // Reset warna tombol grid meja jika batal makan di tempat
+                document.querySelectorAll('.meja-btn').forEach(btn => {
+                    btn.classList.remove('bg-green-500', 'text-white', 'shadow-md');
+                    btn.classList.add('bg-green-50', 'text-green-700');
+                });
             }
+        }
+
+        function pilihMeja(nomor, elemen) {
+            // 1. Reset semua tombol meja hijau ke warna semula
+            document.querySelectorAll('.meja-btn').forEach(btn => {
+                btn.classList.remove('bg-green-500', 'text-white', 'shadow-md');
+                btn.classList.add('bg-green-50', 'text-green-700');
+            });
+
+            // 2. Beri warna hijau pekat pada meja yang baru saja diklik
+            elemen.classList.remove('bg-green-50', 'text-green-700');
+            elemen.classList.add('bg-green-500', 'text-white', 'shadow-md');
+
+            // 3. Simpan nilai meja ke dalam input tersembunyi
+            document.getElementById('modalCustomerTable').value = nomor;
+
+            // 4. Tampilkan teks konfirmasi meja di bawah grid
+            document.getElementById('teksMejaTerpilih').classList.remove('hidden');
+            document.getElementById('labelMeja').innerText = nomor;
         }
 
         function bukaModalPesan(namaMenu, hargaMenu) {

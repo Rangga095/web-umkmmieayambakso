@@ -10,13 +10,11 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Mengambil semua data menu
         $menus = Menu::all();
 
-        // Mengambil HANYA meja yang berstatus 'kosong'
-        $mejas = Meja::where('status', 'kosong')->get();
+        // UBAH BARIS INI: Ambil SEMUA meja, bukan hanya yang kosong
+        $mejas = Meja::all();
 
-        // Mengirim data menu dan meja ke halaman home
         return view('home', compact('menus', 'mejas'));
     }
 }
