@@ -310,7 +310,6 @@
                             <label class="block text-gray-700 font-bold mb-2 text-sm">Catatan Khusus (Opsional)</label>
                             <input type="text" id="modalNote" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none">
                         </div>
-
                         <div class="mb-4 pt-4 border-t border-gray-100">
                             <label class="block text-gray-700 font-bold mb-2 text-sm">Metode Penyajian</label>
                             <select id="modalOrderType" onchange="toggleMejaInput()" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none bg-white cursor-pointer">
@@ -319,14 +318,17 @@
                             </select>
                         </div>
 
-                        <div id="tableNumberWrapper" class="transition-all duration-300">
+                        <div id="tableNumberWrapper" class="transition-all duration-300 hidden">
                             <label class="block text-gray-700 font-bold mb-2 text-sm">Nomor Meja</label>
-                            <input type="text" id="modalCustomerTable" placeholder="Misal: Meja 5" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none">
+                            <select id="modalCustomerTable" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none bg-white cursor-pointer">
+                                <option value="">-- Pilih Meja Kosong --</option>
+                                @foreach($mejas as $meja)
+                                    <option value="{{ $meja->nomor_meja }}">{{ $meja->nomor_meja }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
-
                     <div class="flex flex-col h-full justify-between gap-6">
-
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-orange-100">
                             <h4 class="text-lg font-bold text-gray-800 mb-5 flex items-center gap-2">
                                 <span class="text-xl">👤</span> Identitas & Pembayaran
@@ -356,16 +358,11 @@
                                 <span class="text-base font-medium opacity-90">Total Pembayaran:</span>
                                 <span id="modalTotalPrice" class="text-2xl md:text-3xl font-black tracking-tight">Rp 0</span>
                             </div>
-                            <button type="button" onclick="prosesPesanan()" class="w-full bg-white text-orange-600 py-3.5 rounded-xl text-lg font-bold hover:bg-orange-50 hover:scale-[1.02] transition-transform shadow-sm">
+                           <button type="button" onclick="prosesPesanan()" class="w-full bg-white text-orange-600 py-3.5 rounded-xl text-lg font-bold hover:bg-orange-50 hover:scale-[1.02] transition-transform shadow-sm">
                                 Lanjutkan Pesanan
                             </button>
                         </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div id="viewQRIS" class="p-6 md:p-10 hidden text-center">
+                    </div> </div> </div> <div id="viewQRIS" class="p-6 md:p-10 hidden text-center">
                 <div class="mb-6">
                     <h3 class="text-3xl font-extrabold text-gray-800 mb-2">Selesaikan Pembayaran</h3>
                     <p class="text-gray-500 text-sm">Silakan scan kode QRIS di bawah ini menggunakan M-Banking atau E-Wallet Anda.</p>
@@ -575,14 +572,29 @@
             let meja = document.getElementById('modalCustomerTable').value;
             let paymentMethod = document.getElementById('modalPaymentMethod').value;
 
-            // Validasi Data
-          // Validasi Nama dan WA
-            if (nama.trim() === "" || noWA.trim() === "") {
+      // ==========================================
+            // VALIDASI DATA KETAT (ANTI ASAL-ASALAN)
+            // ==========================================
+
+            // 1. Validasi Nama: Hanya huruf dan spasi, minimal 3 karakter
+            const namaRegex = /^[a-zA-Z\s]{3,}$/;
+            if (!namaRegex.test(nama.trim())) {
                 bukaModalPeringatan('identitas');
+                document.getElementById('judulPeringatan').innerText = "Nama Tidak Valid! 👤";
+                document.getElementById('isiPeringatan').innerHTML = "<p>Mohon masukkan nama asli Anda (minimal 3 karakter berupa huruf, tanpa angka/simbol).</p>";
                 return;
             }
 
-            // Validasi Nomor Meja
+            // 2. Validasi Nomor WA: Harus diawali 08 atau 628, panjang 10-13 angka
+            const waRegex = /^(08|628)[0-9]{8,11}$/;
+            if (!waRegex.test(noWA.trim())) {
+                bukaModalPeringatan('identitas');
+                document.getElementById('judulPeringatan').innerText = "Nomor WA Salah! 📱";
+                document.getElementById('isiPeringatan').innerHTML = "<p>Mohon masukkan nomor WhatsApp aktif yang valid (Contoh: 08123456789 atau 628123456789).</p>";
+                return;
+            }
+
+            // 3. Validasi Nomor Meja (Wajib pilih jika Makan di Tempat)
             if (orderType === 'Makan di Tempat' && meja.trim() === "") {
                 bukaModalPeringatan('meja');
                 return;

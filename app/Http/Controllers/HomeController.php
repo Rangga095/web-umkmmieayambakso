@@ -1,12 +1,22 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
 use App\Models\Menu;
-use App\Models\Meja; // Pastikan Model Meja di-import
+use App\Models\Meja; // Memanggil Model Meja
 
-public function index()
+class HomeController extends Controller
 {
-    $menus = Menu::all();
-    // Ambil HANYA meja yang berstatus 'kosong'
-    $mejas = Meja::where('status', 'kosong')->get();
+    public function index()
+    {
+        // Mengambil semua data menu
+        $menus = Menu::all();
 
-    // Kirim $mejas bersamaan dengan $menus ke halaman home
-    return view('home', compact('menus', 'mejas'));
+        // Mengambil HANYA meja yang berstatus 'kosong'
+        $mejas = Meja::where('status', 'kosong')->get();
+
+        // Mengirim data menu dan meja ke halaman home
+        return view('home', compact('menus', 'mejas'));
+    }
 }
