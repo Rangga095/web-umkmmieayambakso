@@ -9,6 +9,7 @@ Route::get('/', [HomeController::class, 'index']);
 
 // Pintu masuk untuk menyimpan pesanan
 Route::post('/simpan-pesanan', [HomeController::class, 'simpanPesanan']);
+Route::post('/batal-pesanan', [HomeController::class, 'batalkanPesanan']);
 // Pintu khusus untuk radar meja real-time
 Route::get('/cek-status-meja', [HomeController::class, 'cekStatusMeja']);
 // ==========================================

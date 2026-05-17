@@ -59,7 +59,8 @@ class HomeController extends Controller
         // 3. Beri balasan ke frontend bahwa penyimpanan sukses
         return response()->json([
             'status' => 'sukses',
-            'pesan' => 'Pesanan berhasil dicatat!'
+            'pesan' => 'Pesanan berhasil dicatat!',
+            'pesanan_id' => $pesanan->id
         ]);
     }
 
@@ -70,5 +71,33 @@ class HomeController extends Controller
     {
         // Kirim semua data meja dalam format JSON
         return response()->json(Meja::all());
+        // 3. Beri balasan ke frontend bahwa penyimpanan sukses
+        return response()->json([
+            'status' => 'sukses',
+            'pesan' => 'Pesanan berhasil dicatat!',
+            'pesanan_id' => $pesanan->id // TAMBAHKAN BARIS INI
+        ]);
+    }
+    // ==========================================
+    // 4. Fungsi membatalkan pesanan (Ghost Order)
+    // ==========================================
+    public function batalkanPesanan(Request $request)
+    {
+        $pesanan = Pesanan::find($request->id);
+
+        if ($pesanan) {
+            // Jika pesanan ini mengunci meja, kosongkan kembali mejanya!
+            if ($pesanan->meja_id) {
+                $meja = Meja::find($pesanan->meja_id);
+                if ($meja) {
+                    $meja->status = 'kosong';
+                    $meja->save();
+                }
+            }
+            // Hapus pesanan dari database
+            $pesanan->delete();
+            return response()->json(['status' => 'sukses']);
+        }
+        return response()->json(['status' => 'gagal']);
     }
 }

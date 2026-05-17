@@ -400,12 +400,12 @@
                     <p class="text-xs text-orange-600 mt-2 font-medium" id="qrisInstructionText">*Instruksi akan muncul di sini</p>
                 </div>
 
-                <div class="max-w-md mx-auto flex gap-4">
-                    <button type="button" onclick="kembaliKeForm()" class="w-1/3 bg-gray-200 text-gray-700 py-3.5 rounded-xl font-bold hover:bg-gray-300 transition-colors">
-                        Kembali
+                <div class="max-w-md mx-auto flex flex-col gap-3">
+                    <button type="button" onclick="kirimWAFinal()" class="w-full bg-green-500 text-white py-3.5 rounded-xl text-lg font-bold hover:bg-green-600 hover:scale-[1.02] transition-transform shadow-md flex justify-center items-center gap-2">
+                        <span>💬</span> Konfirmasi Pesanan via WA
                     </button>
-                    <button type="button" onclick="kirimWAFinal()" class="w-2/3 bg-green-500 text-white py-3.5 rounded-xl text-lg font-bold hover:bg-green-600 hover:scale-[1.02] transition-transform shadow-md flex justify-center items-center gap-2">
-                        <span>💬</span> Konfirmasi via WA
+                    <button type="button" onclick="batalkanPesananQRIS()" class="w-full bg-red-50 hover:bg-red-100 border-2 border-red-200 text-red-600 font-bold py-3 rounded-xl transition-all">
+                        Batal & Ganti Pesanan
                     </button>
                 </div>
             </div>
@@ -436,6 +436,26 @@
         </div>
 
     </div>
+    <div id="modalKonfirmasi" class="fixed inset-0 z-[120] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl relative transform scale-95 transition-transform duration-300 p-8 md:p-10 text-center" id="modalKonfirmasiContent">
+
+            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <span class="text-4xl">⚠️</span>
+            </div>
+
+            <h3 class="text-2xl font-extrabold text-gray-800 mb-3">Yakin Ingin Batal?</h3>
+            <p class="text-gray-500 mb-8 font-medium text-sm md:text-base leading-relaxed">Pesanan ini akan dihapus dan meja Anda akan dilepaskan kembali untuk pelanggan lain.</p>
+
+            <div class="flex gap-4">
+                <button onclick="tutupModalKonfirmasi()" class="w-1/2 bg-gray-100 text-gray-600 py-3.5 rounded-xl font-bold hover:bg-gray-200 transition-all">
+                    Tidak, Lanjut
+                </button>
+                <button onclick="eksekusiBatalPesanan()" class="w-1/2 bg-red-500 text-white py-3.5 rounded-xl font-bold hover:bg-red-600 shadow-md transition-all">
+                    Ya, Batalkan
+                </button>
+            </div>
+        </div>
+    </div>
     <script>
         const modal = document.getElementById('modalPesan');
         const modalContent = document.getElementById('modalContent');
@@ -447,6 +467,7 @@
         const viewQRIS = document.getElementById('viewQRIS');
 
         let globalWAMessage = "";
+        let currentPesananId = null;
 
         function toggleMejaInput() {
             const orderType = document.getElementById('modalOrderType').value;
@@ -547,7 +568,7 @@
         }
 
         // FUNGSI BARU: Membuka Modal Peringatan
-       function bukaModalPeringatan(tipeError) {
+       function bukaModalPeringatan(tipeError, nomorMeja = '') {
             const judul = document.getElementById('judulPeringatan');
             const isi = document.getElementById('isiPeringatan');
 
@@ -560,13 +581,13 @@
                         <li>Nomor WhatsApp</li>
                     </ul>
                 `;
-            } else if (tipeError === 'meja') {
-                judul.innerText = "Satu Lagi Ketinggalan! 🪑";
-                isi.innerHTML = `
-                    <p>Karena Kakak pilih <b>Makan di Tempat</b>, Pak Sabar perlu tahu Kakak duduk di mana.</p>
-                    <p class="mt-2 text-orange-600 font-semibold">Tolong isi Nomor Meja Kakak di formulir ya! 🍜</p>
-                `;
-            }
+            } else if (tipeError === 'meja_diambil') {
+             judul.innerText = "Yah, Keduluan! 🥲";
+             isi.innerHTML = `
+                 <p>Maaf Kak, pesanan di <b>${nomorMeja}</b> baru saja diselesaikan oleh pelanggan lain sedetik yang lalu.</p>
+                 <p class="mt-2 text-orange-600 font-bold">Silakan pilih meja hijau yang lain ya Kak! 🙏</p>
+             `;
+         }
 
             modalPeringatan.classList.remove('hidden');
             setTimeout(() => {
@@ -711,7 +732,8 @@
                 btnSubmit.disabled = false;
 
                 if(data.status === 'sukses') {
-                    // JIKA DATA BERHASIL DISIMPAN KE DATABASE:
+                    currentPesananId = data.pesanan_id;
+                    //  // JIKA DATA BERHASIL DISIMPAN KE DATABASE:
                     if (paymentMethod === 'Tunai') {
                         kirimWAFinal();
                     } else {
@@ -739,15 +761,37 @@
             });
         }
 
-        function kembaliKeForm() {
-            viewQRIS.classList.remove('block');
-            viewQRIS.classList.add('hidden');
-            viewForm.classList.remove('hidden');
-            viewForm.classList.add('block');
+        function batalkanPesananQRIS() {
+            if(!currentPesananId) return;
+
+            if(confirm('Yakin ingin membatalkan pesanan ini? Meja Anda juga akan dilepaskan kembali.')) {
+                // Ambil token CSRF dari dalam form web
+                let token = '{{ csrf_token() }}';
+
+                // Tembak request ke backend untuk menghapus
+                fetch('/batal-pesanan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: JSON.stringify({ id: currentPesananId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.status === 'sukses') {
+                        // Refresh total halaman agar form dan meja bersih seperti semula
+                        window.location.reload();
+                    } else {
+                        alert('Gagal membatalkan pesanan. Silakan hubungi kasir.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
         }
 
         function kirimWAFinal() {
-            window.open(`https://wa.me/6281234567890?text=${globalWAMessage}`, '_blank');
+            window.open(`https://wa.me/6285161532137?text=${globalWAMessage}`, '_blank');
             tutupModal();
         }
         // ==========================================

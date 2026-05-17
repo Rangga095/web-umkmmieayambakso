@@ -13,24 +13,32 @@
 <body class="p-4 md:p-8">
 
     <div class="mb-8">
-        <h1 class="text-4xl font-black text-gray-800 mb-6">👨‍🍳 Dashboard Kasir Pak Sabar</h1>
-
-        @if(session('sukses'))
-            <div class="bg-green-100 border-l-8 border-green-500 text-green-800 p-4 mb-6 rounded-xl font-bold text-lg shadow-sm">
-                ✅ {{ session('sukses') }}
-            </div>
-        @endif
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-6 rounded-3xl shadow-md border-b-8 border-orange-500">
-                <h2 class="text-gray-500 font-bold text-xl mb-2">Total Pendapatan Hari Ini</h2>
-                <p class="text-5xl font-black text-orange-600">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</p>
-            </div>
-            <div class="bg-white p-6 rounded-3xl shadow-md border-b-8 border-blue-500">
-                <h2 class="text-gray-500 font-bold text-xl mb-2">Total Porsi Terjual</h2>
-                <p class="text-5xl font-black text-blue-600">{{ $totalPorsi }} <span class="text-2xl text-gray-400">Mangkok</span></p>
-            </div>
+<div class="bg-gradient-to-r from-orange-500 to-orange-600 p-6 md:p-8 rounded-3xl shadow-lg mb-8 text-white flex flex-col md:flex-row justify-between items-center">
+        <div>
+            <h1 class="text-4xl font-black mb-2">👨‍🍳 Kasir Pak Sabar</h1>
+            <p class="text-orange-100 font-bold text-xl">Rekap Harian: {{ \Carbon\Carbon::now()->timezone('Asia/Jakarta')->translatedFormat('l, d F Y') }}</p>
         </div>
+        <div class="mt-4 md:mt-0 text-right">
+            <span class="bg-white text-orange-600 px-4 py-2 rounded-xl font-black text-lg shadow-sm">Buka (Otomatis Reset Pukul 00:00)</span>
+        </div>
+    </div>
+
+    @if(session('sukses'))
+        <div class="bg-green-100 border-l-8 border-green-500 text-green-800 p-4 mb-6 rounded-xl font-bold text-lg shadow-sm">
+            ✅ {{ session('sukses') }}
+        </div>
+    @endif
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-md border-b-8 border-orange-500">
+            <h2 class="text-gray-500 font-bold text-2xl mb-2">Total Pemasukan Hari Ini</h2>
+            <p class="text-5xl font-black text-orange-600">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</p>
+        </div>
+        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-md border-b-8 border-blue-500">
+            <h2 class="text-gray-500 font-bold text-2xl mb-2">Total Porsi Terjual</h2>
+            <p class="text-5xl font-black text-blue-600">{{ $totalPorsi }} <span class="text-3xl text-gray-400">Mangkok</span></p>
+        </div>
+    </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -90,13 +98,20 @@
                                         ❌ TOLAK
                                     </button>
                                 </div>
-                            @elseif($pesanan->status_pesanan == 'dimasak')
-                                <form action="/admin/pesanan/selesai/{{ $pesanan->id }}" method="POST" class="mt-2">
-                                    @csrf
-                                    <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-black text-2xl py-4 rounded-2xl shadow-md transition-all">
-                                        🏁 MAKANAN SIAP
+                           @elseif($pesanan->status_pesanan == 'dimasak')
+                                <div class="flex gap-4 mt-4 border-t-2 border-gray-100 pt-4">
+                                    <form action="/admin/pesanan/selesai/{{ $pesanan->id }}" method="POST" class="w-2/3">
+                                        @csrf
+                                        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-black text-2xl py-4 rounded-2xl shadow-md transition-all">
+                                            🏁 MAKANAN SIAP
+                                        </button>
+                                    </form>
+
+                                    <button type="button" onclick="kabariWASelesai('{{ $pesanan->nomor_wa }}', '{{ $pesanan->nama_customer }}', '{{ $pesanan->metode_penyajian }}')" class="w-1/3 bg-green-50 hover:bg-green-100 text-green-700 font-black py-4 rounded-2xl border-2 border-green-400 shadow-sm transition-all flex flex-col justify-center items-center leading-tight">
+                                        <span class="text-sm">📱 KABARI WA</span>
+                                        <span class="text-xl">PELANGGAN</span>
                                     </button>
-                                </form>
+                                </div>
                             @endif
                         </div>
                     @endif
@@ -148,6 +163,20 @@
                 // 3. Eksekusi hapus data dari layar Admin
                 document.getElementById('form-tolak-' + id).submit();
             }
+        }
+        function kabariWASelesai(nomor, nama, penyajian) {
+            // Ubah awalan 08 menjadi 628
+            if(nomor.startsWith('0')) nomor = '62' + nomor.substring(1);
+
+            let teks = '';
+            // Bedakan teks untuk yang bungkus dan makan di tempat
+            if (penyajian === 'Makan di Tempat') {
+                teks = `Halo Kak ${nama}, pesanan Kakak sudah matang dan siap disajikan di meja ya! Selamat menikmati masakan khas Pak Sabar 🍜`;
+            } else {
+                teks = `Halo Kak ${nama}, pesanan bungkus Kakak sudah selesai dimasak dan SIAP DIAMBIL ke warung ya! Ditunggu kedatangannya Kak 🛵`;
+            }
+
+            window.open(`https://wa.me/${nomor}?text=${encodeURIComponent(teks)}`, '_blank');
         }
 
         // Auto Refresh Halaman Setiap 10 Detik agar pesanan baru otomatis muncul
