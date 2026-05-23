@@ -416,7 +416,7 @@
    <div id="modalPeringatan" class="fixed inset-0 z-[110] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
 
         <div class="bg-white w-full max-w-3xl rounded-[2rem] shadow-2xl relative transform scale-95 transition-transform duration-300" id="modalPeringatanContent">
-            <button onclick="tutupModalPeringatan()" class="absolute top-4 right-4 bg-orange-100 text-orange-600 hover:text-red-500 hover:bg-red-50 rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl shadow-sm transition-all z-10">
+            ✕
             </button>
             <div class="grid grid-cols-1 md:grid-cols-5 overflow-hidden rounded-[2rem]">
                 <div class="relative h-64 md:h-auto md:col-span-2 bg-orange-50 p-6 flex items-center justify-center">
@@ -568,26 +568,26 @@
         }
 
         // FUNGSI BARU: Membuka Modal Peringatan
-       function bukaModalPeringatan(tipeError, nomorMeja = '') {
+       // FUNGSI BARU: Membuka Modal Peringatan (Disempurnakan)
+        function bukaModalPeringatan(tipeError, nomorMeja = '') {
             const judul = document.getElementById('judulPeringatan');
             const isi = document.getElementById('isiPeringatan');
 
             if (tipeError === 'identitas') {
-                judul.innerText = "Duh, Maaf Banget Kak! 🙏";
+                // Kosongkan di sini karena teks akan disuntik langsung oleh prosesPesanan()
+            } else if (tipeError === 'meja') {
+                judul.innerText = "Satu Lagi Ketinggalan! 🪑";
                 isi.innerHTML = `
-                    <p>Pak Sabar butuh sedikit bantuan nih. Biar pesanannya nggak ketuker, tolong lengkapi data berikut ya:</p>
-                    <ul class="list-disc list-inside font-semibold text-orange-600 mt-2">
-                        <li>Nama Pemesan</li>
-                        <li>Nomor WhatsApp</li>
-                    </ul>
+                    <p>Karena Kakak pilih <b>Makan di Tempat</b>, Pak Sabar perlu tahu Kakak duduk di mana.</p>
+                    <p class="mt-2 text-orange-600 font-semibold">Tolong isi Nomor Meja Kakak di formulir ya! 🍜</p>
                 `;
             } else if (tipeError === 'meja_diambil') {
-             judul.innerText = "Yah, Keduluan! 🥲";
-             isi.innerHTML = `
-                 <p>Maaf Kak, pesanan di <b>${nomorMeja}</b> baru saja diselesaikan oleh pelanggan lain sedetik yang lalu.</p>
-                 <p class="mt-2 text-orange-600 font-bold">Silakan pilih meja hijau yang lain ya Kak! 🙏</p>
-             `;
-         }
+                judul.innerText = "Yah, Keduluan! 🥲";
+                isi.innerHTML = `
+                    <p>Maaf Kak, pesanan di <b>${nomorMeja}</b> baru saja diselesaikan oleh pelanggan lain.</p>
+                    <p class="mt-2 text-orange-600 font-bold">Silakan pilih meja hijau yang lain ya Kak! 🙏</p>
+                `;
+            }
 
             modalPeringatan.classList.remove('hidden');
             setTimeout(() => {
@@ -761,33 +761,67 @@
             });
         }
 
+        // 1. Fungsi Membuka Modal Konfirmasi
+        function bukaModalKonfirmasi() {
+            const modalKonf = document.getElementById('modalKonfirmasi');
+            const modalKonfContent = document.getElementById('modalKonfirmasiContent');
+            modalKonf.classList.remove('hidden');
+            setTimeout(() => {
+                modalKonf.classList.remove('opacity-0');
+                modalKonfContent.classList.remove('scale-95');
+                modalKonfContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        // 2. Fungsi Menutup Modal Konfirmasi
+        function tutupModalKonfirmasi() {
+            const modalKonf = document.getElementById('modalKonfirmasi');
+            const modalKonfContent = document.getElementById('modalKonfirmasiContent');
+            modalKonf.classList.add('opacity-0');
+            modalKonfContent.classList.remove('scale-100');
+            modalKonfContent.classList.add('scale-95');
+            setTimeout(() => {
+                modalKonf.classList.add('hidden');
+            }, 300);
+        }
+
+        // 3. Fungsi Pemicu dari Tombol QRIS
         function batalkanPesananQRIS() {
-            if(!currentPesananId) return;
-
-            if(confirm('Yakin ingin membatalkan pesanan ini? Meja Anda juga akan dilepaskan kembali.')) {
-                // Ambil token CSRF dari dalam form web
-                let token = '{{ csrf_token() }}';
-
-                // Tembak request ke backend untuk menghapus
-                fetch('/batal-pesanan', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': token
-                    },
-                    body: JSON.stringify({ id: currentPesananId })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if(data.status === 'sukses') {
-                        // Refresh total halaman agar form dan meja bersih seperti semula
-                        window.location.reload();
-                    } else {
-                        alert('Gagal membatalkan pesanan. Silakan hubungi kasir.');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+            if(!currentPesananId) {
+                bukaModalPeringatan('identitas'); // Pinjam modal identitas jika ada error id
+                document.getElementById('judulPeringatan').innerText = "Gagal Sistem ❌";
+                document.getElementById('isiPeringatan').innerHTML = "Sistem belum mengenali pesanan Anda. Silakan refresh halaman.";
+                return;
             }
+            bukaModalKonfirmasi(); // Panggil popup keren kita!
+        }
+
+        // 4. Eksekusi Pembatalan ke Database (Jika ditekan "Ya, Batalkan")
+        function eksekusiBatalPesanan() {
+            let token = '{{ csrf_token() }}';
+
+            // Beri efek loading pada tombol agar tidak diklik 2x
+            const btnYa = document.querySelector('#modalKonfirmasiContent button.bg-red-500');
+            btnYa.innerText = "Menghapus... ⏳";
+            btnYa.disabled = true;
+
+            fetch('/batal-pesanan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token
+                },
+                body: JSON.stringify({ id: currentPesananId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'sukses') {
+                    window.location.reload();
+                } else {
+                    alert('Gagal membatalkan pesanan. Silakan hubungi kasir.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
 
         function kirimWAFinal() {
@@ -805,26 +839,27 @@
             .then(response => response.json())
             .then(data => {
                 data.forEach(meja => {
-                    // Cari tombol meja di layar berdasarkan ID (KTP yang kita buat di Langkah 2)
+                    // Cari tombol meja di layar berdasarkan ID
                     let idTombol = 'btn-meja-' + meja.nomor_meja.replace(/\s/g, '');
                     let btn = document.getElementById(idTombol);
 
                     if(btn) {
-                        // JIKA DI DATABASE TERISI (MERAH), TAPI DI LAYAR CUSTOMER MASIH HIJAU
+                        // KONDISI 1: JIKA DI DATABASE TERISI (Ubah Layar Jadi Merah)
                         if(meja.status === 'terisi' && !btn.disabled) {
-
-                            // 1. Ubah visual tombol jadi merah dan matikan
                             btn.disabled = true;
                             btn.className = "w-full py-2 rounded-xl border-2 border-red-200 bg-red-50 text-red-400 font-black text-sm md:text-base cursor-not-allowed opacity-70";
-                            btn.onclick = null; // Hapus kemampuan klik
 
-                            // 2. Cegah bentrok! Jika customer sedang memilih meja ini, batalkan pilihannya!
+                            // Cegah bentrok jika customer sedang nge-klik meja ini
                             if(document.getElementById('modalCustomerTable').value === meja.nomor_meja) {
                                 document.getElementById('modalCustomerTable').value = '';
                                 document.getElementById('teksMejaTerpilih').classList.add('hidden');
-
-                                alert('Yah! 🥲 ' + meja.nomor_meja + ' baru saja selesai dipesan oleh orang lain sedetik yang lalu. Silakan pilih meja hijau yang lain ya kak.');
+                                bukaModalPeringatan('meja_diambil', meja.nomor_meja);
                             }
+                        }
+                        // KONDISI 2: JIKA DI DATABASE KOSONG LAGI (Kembalikan Jadi Hijau)
+                        else if (meja.status === 'kosong' && btn.disabled) {
+                            btn.disabled = false;
+                            btn.className = "meja-btn w-full py-2 rounded-xl border-2 border-green-400 bg-green-50 text-green-700 font-black text-sm md:text-base hover:bg-green-500 hover:text-white hover:shadow-md transition-all cursor-pointer";
                         }
                     }
                 });
