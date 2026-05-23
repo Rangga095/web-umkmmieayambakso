@@ -10,11 +10,14 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        // Membuat akun admin khusus Pak Sabar
-        User::create([
-            'name' => 'Pak Sabar',
-            'email' => 'admin@paksabar.com', // Ini yang akan dipakai login
-            'password' => Hash::make('paksabar123') // Ini passwordnya
-        ]);
+        // Jurus updateOrCreate: Jika email sudah ada, cukup update passwordnya.
+        // Jika belum ada, buatkan akun baru. Dijamin 100% bebas error duplikat!
+        User::updateOrCreate(
+            ['email' => 'admin@paksabar.com'], // Patokan pencarian
+            [
+                'name' => 'Pak Sabar',
+                'password' => Hash::make('paksabar123') // Password yang ingin dipasang
+            ]
+        );
     }
 }

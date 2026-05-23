@@ -18,8 +18,18 @@
             <h1 class="text-4xl font-black mb-2">👨‍🍳 Kasir Pak Sabar</h1>
             <p class="text-orange-100 font-bold text-xl">Rekap Harian: {{ \Carbon\Carbon::now()->timezone('Asia/Jakarta')->translatedFormat('l, d F Y') }}</p>
         </div>
-        <div class="mt-4 md:mt-0 text-right">
-            <span class="bg-white text-orange-600 px-4 py-2 rounded-xl font-black text-lg shadow-sm">Buka (Otomatis Reset Pukul 00:00)</span>
+        <div class="mt-4 md:mt-0 text-right flex items-center justify-end gap-3">
+            <span class="bg-white text-orange-600 px-4 py-2 rounded-xl font-black text-lg shadow-sm hidden md:inline-block">Buka (Otomatis Reset Pukul 00:00)</span>
+            
+            <button type="button" onclick="bukaModalProfil()" class="bg-orange-100 hover:bg-orange-200 text-orange-700 px-4 py-2 rounded-xl font-bold shadow-md transition-all flex items-center gap-2">
+                <span>⚙️</span> Pengaturan Akun
+            </button>
+            <form action="/logout" method="POST" class="m-0 p-0">
+                @csrf
+                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-bold shadow-md transition-all flex items-center gap-2">
+                    <span>🚪</span> Keluar
+                </button>
+            </form>
         </div>
     </div>
 
@@ -150,8 +160,87 @@
 
     </div>
 
-    <script>
-       function prosesTolakPesanan(id, nomor, nama, menu) {
+    <div id="modalProfil" class="fixed inset-0 z-[150] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl relative transform scale-95 transition-transform duration-300 p-8 md:p-10" id="modalProfilContent">
+            
+            <button onclick="tutupModalProfil()" class="absolute top-4 right-4 bg-orange-50 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl shadow-sm transition-all z-10">
+                ✕
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span class="text-3xl">⚙️</span>
+                </div>
+                <h3 class="text-2xl font-black text-gray-800">Pengaturan Akun</h3>
+                <p class="text-gray-400 text-xs mt-1">Ubah email atau kata sandi pengelola kasir.</p>
+            </div>
+
+            <form action="/admin/profile/update" method="POST" class="space-y-4">
+                @csrf
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1.5 text-xs ml-1">Nama Pengelola</label>
+                    <input type="text" name="name" value="{{ auth()->user()->name }}" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-orange-100 focus:border-orange-500 outline-none transition-all bg-gray-50 font-medium text-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1.5 text-xs ml-1">Email Login Baru</label>
+                    <input type="email" name="email" value="{{ auth()->user()->email }}" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-orange-100 focus:border-orange-500 outline-none transition-all bg-gray-50 font-medium text-sm" required>
+                </div>
+                <div class="pt-2 border-t border-dashed border-gray-200">
+                    <label class="block text-gray-700 font-bold mb-1.5 text-xs ml-1">Kata Sandi Baru (Kosongkan jika tidak diganti)</label>
+                    <input type="password" name="password" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-orange-100 focus:border-orange-500 outline-none transition-all bg-gray-50 font-medium text-sm" placeholder="Minimal 8 karakter">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1.5 text-xs ml-1">Ulangi Kata Sandi Baru</label>
+                    <input type="password" name="password_confirmation" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-orange-100 focus:border-orange-500 outline-none transition-all bg-gray-50 font-medium text-sm" placeholder="Ketik ulang kata sandi baru">
+                </div>
+
+                <button type="submit" class="w-full bg-orange-600 text-white py-3.5 rounded-xl font-bold hover:bg-orange-700 shadow-md transition-all text-sm mt-2">
+                    Simpan Perubahan Data
+                </button>
+            </form>
+        </div>
+    </div>
+<script>
+        let isModalTerbuka = false; // Variabel pengontrol radar
+
+        // 1. Menangkap Pesan Sukses atau Error dari Sistem Laravel
+        @if(session('sukses'))
+            alert("✅ {{ session('sukses') }}");
+        @endif
+
+        @if($errors->any())
+            alert("❌ Gagal menyimpan! Pastikan format email belum terpakai dan sandi baru minimal 8 karakter (serta cocok dengan kolom ulangi sandi).");
+            // Langsung buka otomatis modalnya lagi jika ada error
+            window.onload = function() {
+                bukaModalProfil();
+            };
+        @endif
+
+        function bukaModalProfil() {
+            isModalTerbuka = true; // Hentikan radar saat mengetik!
+            const mProfil = document.getElementById('modalProfil');
+            const mProfilContent = document.getElementById('modalProfilContent');
+            mProfil.classList.remove('hidden');
+            setTimeout(() => {
+                mProfil.classList.remove('opacity-0');
+                mProfilContent.classList.remove('scale-95');
+                mProfilContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function tutupModalProfil() {
+            isModalTerbuka = false; // Lanjutkan radar saat modal ditutup!
+            const mProfil = document.getElementById('modalProfil');
+            const mProfilContent = document.getElementById('modalProfilContent');
+            mProfil.classList.add('opacity-0');
+            mProfilContent.classList.remove('scale-100');
+            mProfilContent.classList.add('scale-95');
+            setTimeout(() => {
+                mProfil.classList.add('hidden'); // Diperbaiki typo-nya di sini
+            }, 300);
+        }
+
+        function prosesTolakPesanan(id, nomor, nama, menu) {
             if(confirm('Yakin ingin MENOLAK pesanan ini?')) {
                 // 1. Ubah 08 jadi 628
                 if(nomor.startsWith('0')) nomor = '62' + nomor.substring(1);
@@ -164,6 +253,7 @@
                 document.getElementById('form-tolak-' + id).submit();
             }
         }
+
         function kabariWASelesai(nomor, nama, penyajian) {
             // Ubah awalan 08 menjadi 628
             if(nomor.startsWith('0')) nomor = '62' + nomor.substring(1);
@@ -181,6 +271,9 @@
 
         // Auto Refresh Halaman Setiap 10 Detik agar pesanan baru otomatis muncul
         setInterval(() => {
+            // TAHAP 4: Cegat otomatis! Jika modal terbuka, lewati proses refresh halamannya
+            if (isModalTerbuka === true) return; 
+            
             window.location.reload();
         }, 10000);
     </script>

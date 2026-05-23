@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Pesanan;
 use App\Models\Meja;
 use Carbon\Carbon;
@@ -23,6 +24,32 @@ class AdminController extends Controller
         $totalPorsi = $pesanans->where('status_pesanan', 'selesai')->sum('jumlah');
 
         return view('admin.dashboard', compact('pesanans', 'mejas', 'totalPendapatan', 'totalPorsi'));
+    }
+
+    // Fungsi untuk memperbarui email dan password dari Dashboard
+    public function updateProfil(Request $request)
+    {
+        $user = auth()->user(); // Mengambil data akun yang sedang login
+
+        // Validasi input data
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|min:8|confirmed', // Password boleh kosong jika hanya ingin ganti email
+        ]);
+
+        // Update nama dan email
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        // Jika kolom password diisi, maka update password barunya
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save(); // Simpan perubahan ke database
+
+        return back()->with('sukses', 'Data Akun Pengelola berhasil diperbarui!');
     }
 
     // 2. Terima Pesanan (Ubah status jadi dimasak)
